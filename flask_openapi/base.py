@@ -1,8 +1,13 @@
 from functools import wraps
 from pydantic import ValidationError, BaseModel
-from flask import Blueprint, abort, request, current_app
+from flask import Blueprint, abort, request, current_app, jsonify
 
 from flask_openapi.config import default_config
+from flask_openapi.template import REDOC
+
+
+def redoc_page(spec_file):
+    return REDOC.format(spec_file)
 
 
 class FlaskOpenAPI:
@@ -35,7 +40,7 @@ class FlaskOpenAPI:
 
         blueprint.add_url_rule(
             self.config.endpoint,
-            view_func)
+            view_func=redoc_page)
 
         app.register_blueprint(blueprint)
 
@@ -45,24 +50,31 @@ class FlaskOpenAPI:
         """
         rules = current_app.url_map.iter_rules()
 
-    def validate(self, Model):
+    def validate(self, query, resp):
         """
         validate JSON data according to Model schema
         """
         def decorate_validate_request(func):
-            @wraps
+            @wraps(func)
             def validate_request(*args, **kwargs):
-                assert isinstance(Model, BaseModel)
-                self.models.add(Model)
+                assert issubclass(query, BaseModel)
+                self.models.add(query)
+                nonlocal resp
+                if resp:
+                    self.models.add(resp)
                 try:
                     json_obj = request.get_json()
-                    model = Model(**json_obj)
+                    if json_obj is None:
+                        json_obj = {}
+                    model = query(**json_obj)
                 except ValidationError as err:
-                    abort(400, err)
+                    abort(422, err)
                 except Exception:
                     raise
-                request.model = model
-                return func(*args, **kwargs)
+                request.query = model
+                response = func(*args, **kwargs)
+                assert isinstance(response, resp)
+                return jsonify(**response.dict())
             return validate_request
         return decorate_validate_request
 

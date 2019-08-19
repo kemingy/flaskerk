@@ -1,6 +1,6 @@
 class Config:
-    endpoint = 'apidocs'
-    url_prefix = 'docs'
+    endpoint = '/apidocs'
+    url_prefix = '/docs'
     template_folder = 'tempaltes'
     endpoint = '/'
 
