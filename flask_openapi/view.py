@@ -1,4 +1,4 @@
-from flask import render_template, jsonify
+from flask import render_template, jsonify, abort
 from flask.views import MethodView
 
 
@@ -21,3 +21,4 @@ class JSONview(MethodView):
     def get(self, filename):
         if filename == self.config.filename:
             return jsonify(self.config.data)
+        abort(404)

@@ -1,1 +1,1 @@
-from flask_openapi.base import FlaskOpenAPI
+from flask_openapi.base import FlaskOpenAPI  # noqa: F401

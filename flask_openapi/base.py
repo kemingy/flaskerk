@@ -49,7 +49,6 @@ class FlaskOpenAPI:
         # docs/openapi.json
         blueprint.add_url_rule(
             self.config.endpoint + '<filename>',
-            # self.config.name,
             view_func=JSONview().as_view(
                 self.config.name + '_json',
                 view_args=dict(config=self.config),
@@ -63,7 +62,6 @@ class FlaskOpenAPI:
         generate OpenAPI spec JSON file
         """
         # rules = self.app.url_map.iter_rules()
-        filename = self.config.filename
         data = {
             'openapi': self.config.openapi_veresion,
             'info': {
@@ -94,9 +92,12 @@ class FlaskOpenAPI:
         def decorate_validate_request(func):
             @wraps(func)
             def validate_request(*args, **kwargs):
-                assert issubclass(query, BaseModel)
+                if not issubclass(query, BaseModel):
+                    abort(422, 'Unsupported request data type.')
+
                 self.models.add(query)
                 nonlocal resp
+
                 if resp:
                     self.models.add(resp)
                 try:
@@ -108,9 +109,12 @@ class FlaskOpenAPI:
                     abort(422, err)
                 except Exception:
                     raise
+
                 request.query = model
                 response = func(*args, **kwargs)
-                assert isinstance(response, resp)
+                if not isinstance(response, resp):
+                    abort(500, 'Wrong response type produced by server.')
+
                 return jsonify(**response.dict())
             return validate_request
         return decorate_validate_request
