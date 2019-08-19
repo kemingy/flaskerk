@@ -61,7 +61,11 @@ class FlaskOpenAPI:
         """
         generate OpenAPI spec JSON file
         """
-        # rules = self.app.url_map.iter_rules()
+        routes = {}
+        for rule in self.app.url_map.iter_rules():
+            routes[rule] = {}
+            func = self.app.view_functions[rule.endpoint]
+            methods = rule.methods
         data = {
             'openapi': self.config.openapi_veresion,
             'info': {
@@ -116,6 +120,9 @@ class FlaskOpenAPI:
                     abort(500, 'Wrong response type produced by server.')
 
                 return jsonify(**response.dict())
+
+            validate_request.query = query.schema()
+            validate_request.resp = resp.schema()
             return validate_request
         return decorate_validate_request
 
