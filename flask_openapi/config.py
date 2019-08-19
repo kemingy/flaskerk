@@ -1,8 +1,9 @@
 class Config:
-    endpoint = '/apidocs'
-    url_prefix = '/docs'
-    template_folder = 'tempaltes'
-    endpoint = '/'
+    name = 'docs'
+    endpoint = '/docs/'
+    url_prefix = None
+    template_folder = 'templates'
+    filename = 'openapi.json'
 
     openapi_veresion = '3.0.2'
     title = 'Service Documents'

@@ -1,13 +1,11 @@
+import os
+import json
 from functools import wraps
 from pydantic import ValidationError, BaseModel
 from flask import Blueprint, abort, request, current_app, jsonify
 
 from flask_openapi.config import default_config
-from flask_openapi.template import REDOC
-
-
-def redoc_page(spec_file):
-    return REDOC.format(spec_file)
+from flask_openapi.view import APIview, JSONview
 
 
 class FlaskOpenAPI:
@@ -20,35 +18,74 @@ class FlaskOpenAPI:
 
     def init_app(self, app):
         self.app = app
-        self.update_config(app)
-        self.register(app)
-        self.parse_path(app)
+        self.update_config()
+        self.register()
+        self.parse_path()
         app.openapi = self
 
-    def update_config(self, app):
-        configs = app.config.get('OPENAPI', {})
+    def update_config(self):
+        configs = self.app.config.get('OPENAPI', {})
         for key, value in configs.items():
             setattr(self.config, key, value)
 
-    def register(self, app):
+    def register(self):
         blueprint = Blueprint(
-            self.config.endpoint,
+            self.config.name,
             __name__,
             url_prefix=self.config.url_prefix,
             template_folder=self.config.template_folder,
         )
 
+        self.generate_spec()
+        # docs
         blueprint.add_url_rule(
             self.config.endpoint,
-            view_func=redoc_page)
+            self.config.name,
+            view_func=APIview().as_view(
+                self.config.name,
+                view_args=dict(config=self.config),
+            )
+        )
+        # docs/openapi.json
+        blueprint.add_url_rule(
+            self.config.endpoint + '<filename>',
+            # self.config.name,
+            view_func=JSONview().as_view(
+                self.config.name + '_json',
+                view_args=dict(config=self.config),
+            )
+        )
 
-        app.register_blueprint(blueprint)
+        self.app.register_blueprint(blueprint)
 
     def generate_spec(self):
         """
         generate OpenAPI spec JSON file
         """
-        rules = current_app.url_map.iter_rules()
+        # rules = self.app.url_map.iter_rules()
+        filename = self.config.filename
+        data = {
+            'openapi': self.config.openapi_veresion,
+            'info': {
+                'title': self.config.title,
+                'version': self.config.version,
+            },
+            'paths': {
+                '/': {
+                    'get': {
+                        'responses': {
+                            '200': {}
+                        }
+                    }
+                }
+            },
+            'components': {
+                'schemas': {
+                    model.__name__: model.schema() for model in self.models
+                }
+            }
+        }
+        self.config.data = data
 
     def validate(self, query, resp):
         """
@@ -78,5 +115,5 @@ class FlaskOpenAPI:
             return validate_request
         return decorate_validate_request
 
-    def parse_path(self, app):
+    def parse_path(self):
         pass
