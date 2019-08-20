@@ -2,7 +2,7 @@ install:
 	pip3 install -e .
 
 test:
-	py.test test -vv
+	py.test tests -vv
 
 doc:
 	cd docs && make html
