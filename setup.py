@@ -20,7 +20,7 @@ setup(
     description='',
     long_description=readme,
     long_description_content_type='text/markdown',
-    url='https://github.com/kemingy/flask-openapi',
+    url='https://github.com/kemingy/flaskerk',
     packages=find_packages(exclude=['examples*', 'tests*']),
     package_data={},
     classifiers=[
