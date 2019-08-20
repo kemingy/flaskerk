@@ -1,0 +1,8 @@
+from flask import Flask
+from flaskerk import Flaskerk
+
+
+def test_import_init():
+    app = Flask(__name__)
+    api = Flaskerk(app)
+    assert len(api.models) > 0
