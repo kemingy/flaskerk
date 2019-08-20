@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>flaskerk.base &#8212; flaskerk  documentation</title>
+    <link rel="stylesheet" href="../../_static/flask.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <script>DOCUMENTATION_OPTIONS.URL_ROOT = '../../';</script>
+   
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">flaskerk  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for flaskerk.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="k">import</span> <span class="n">ValidationError</span><span class="p">,</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+
+<span class="kn">from</span> <span class="nn">flaskerk.config</span> <span class="k">import</span> <span class="n">default_config</span>
+<span class="kn">from</span> <span class="nn">flaskerk.view</span> <span class="k">import</span> <span class="n">APIview</span>
+<span class="kn">from</span> <span class="nn">flaskerk.exception</span> <span class="k">import</span> <span class="n">HTTPValidationError</span>
+
+
+<div class="viewcode-block" id="Flaskerk"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk">[docs]</a><span class="k">class</span> <span class="nc">Flaskerk</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param app: Flask app instance</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="n">default_config</span>
+
+        <span class="k">if</span> <span class="n">app</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">HTTPValidationError</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">HTTPValidationError</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_path</span><span class="p">()</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">openapi</span> <span class="o">=</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="Flaskerk.update_config"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        update config from Flask app config with key &#39;OPENAPI&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OPENAPI&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Flaskerk.register"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        register doc blueprint to Flask app</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">url_prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">url_prefix</span><span class="p">,</span>
+            <span class="n">template_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">template_folder</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_spec</span><span class="p">()</span>
+        <span class="c1"># docs</span>
+        <span class="n">blueprint</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">view_func</span><span class="o">=</span><span class="n">APIview</span><span class="p">()</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">view_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># docs/openapi.json</span>
+        <span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.config.endpoint}</span><span class="s1">&lt;filename&gt;&#39;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">jsonfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">generate_spec</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Flaskerk.generate_spec"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.generate_spec">[docs]</a>    <span class="k">def</span> <span class="nf">generate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        generate OpenAPI spec JSON file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">routes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">url_map</span><span class="o">.</span><span class="n">iter_rules</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">endpoint</span><span class="p">)</span> <span class="ow">or</span> \
+                    <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/static&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">endpoint</span><span class="p">]</span>
+            <span class="n">routes</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">methods</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;HEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">has_schema</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;resp&#39;</span><span class="p">)</span>
+                <span class="n">spec</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span>
+                    <span class="s1">&#39;operationID&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="n">has_schema</span><span class="p">:</span>
+                    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;requestBody&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.query}</span><span class="s1">&#39;</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s1">&#39;200&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Successful Response&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                        <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.resp}</span><span class="s1">&#39;</span>
+                                    <span class="p">}</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                        <span class="s1">&#39;422&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Validation Error&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                        <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/components/schemas/HTTPValidationError&#39;</span><span class="p">,</span>
+                                    <span class="p">}</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s1">&#39;200&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Successful Response&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{}</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+
+                <span class="n">routes</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)][</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">spec</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;openapi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">openapi_veresion</span><span class="p">,</span>
+            <span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;paths&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="o">**</span><span class="n">routes</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;components&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;schemas&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="n">schema</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        validate JSON data according to Model schema</span>
+
+<span class="sd">        :param query: ``pydantic.BaseModel`` schema for request</span>
+<span class="sd">        :param resp: ``pydantic.BaseModel`` schema for response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">decorate_validate_request</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">validate_request</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+                    <span class="n">abort</span><span class="p">(</span><span class="mi">422</span><span class="p">,</span> <span class="s1">&#39;Unsupported request data type.&#39;</span><span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">json_obj</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">json_obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">json_obj</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="o">**</span><span class="n">json_obj</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="n">abort</span><span class="p">(</span><span class="mi">422</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">raise</span>
+
+                <span class="n">request</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">model</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+                    <span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Wrong response type produced by server.&#39;</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">query</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">resp</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
+            <span class="n">validate_request</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="n">validate_request</span><span class="o">.</span><span class="n">resp</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">return</span> <span class="n">validate_request</span>
+        <span class="k">return</span> <span class="n">decorate_validate_request</span></div>
+
+    <span class="k">def</span> <span class="nf">parse_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+  <span id="sidebar-top"></span>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  
+    
+  
+<h3>Navigation</h3>
+<ul>
+  <li><a href="../../index.html">Overview</a>
+    <ul>
+      <li><a href="../index.html">Module code</a>
+        
+          
+          </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Keming.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  <script type="text/javascript" src="../../_static/version_warning_offset.js"></script>
+
+  </body>
+</html>
