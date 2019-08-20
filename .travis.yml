@@ -23,4 +23,4 @@ deploy:
   github-token: $GITHUB_TOKEN
   local-dir: docs/build/html
   committer-from-gh: true
-  python: "3.6"
+  verbose: true
