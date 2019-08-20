@@ -63,7 +63,7 @@ class FlaskOpenAPI:
         """
         routes = {}
         for rule in self.app.url_map.iter_rules():
-            routes[rule] = {}
+            routes[str(rule)] = {}
             func = self.app.view_functions[rule.endpoint]
             methods = rule.methods
         data = {
@@ -99,11 +99,6 @@ class FlaskOpenAPI:
                 if not issubclass(query, BaseModel):
                     abort(422, 'Unsupported request data type.')
 
-                self.models.add(query)
-                nonlocal resp
-
-                if resp:
-                    self.models.add(resp)
                 try:
                     json_obj = request.get_json()
                     if json_obj is None:
@@ -121,6 +116,8 @@ class FlaskOpenAPI:
 
                 return jsonify(**response.dict())
 
+            self.models.add(query)
+            self.models.add(resp)
             validate_request.query = query.schema()
             validate_request.resp = resp.schema()
             return validate_request
