@@ -25,8 +25,6 @@ setup(
     package_data={},
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: MIT',
-        'Operating System :: OS Indenpendent',
     ],
     install_requires=requires,
     zip_safe=False,
