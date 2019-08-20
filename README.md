@@ -6,7 +6,7 @@ Mainly built for Machine Learning Model services.
 
 ## Features
 
-- [x] JSON data(request&response) validation with pydantic
+- [x] JSON data(request&response) validation with [pydantic](https://github.com/samuelcolvin/pydantic/)
 - [x] Redoc UI
 - [x] OpenAPI spec
 - [ ] Swagger UI
