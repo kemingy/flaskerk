@@ -30,7 +30,8 @@ author = 'Keming'
 extensions = [
     "pallets_sphinx_themes",
     'sphinx.ext.viewcode',
-    'sphinx.ext.autodoc'
+    'sphinx.ext.autodoc',
+    'sphinx.ext.githubpages',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
