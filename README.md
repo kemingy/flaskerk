@@ -14,6 +14,8 @@ Mainly built for Machine Learning Model services.
 
 ## Quick Start
 
+install with `pip install flaskerk` (Python 3.6+)
+
 ```py
 from typing import List
 from flask import Flask, request
