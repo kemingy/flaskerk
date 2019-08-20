@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from pydantic import BaseModel, Schema
 from typing import List
 
-from flask_openapi import FlaskOpenAPI
+from flaskerk import Flaskerk
 
 
 class Query(BaseModel):
@@ -34,7 +34,7 @@ class Response(BaseModel):
 
 
 app = Flask(__name__)
-api = FlaskOpenAPI(app)
+api = Flaskerk(app)
 
 
 @app.route('/api/predict', methods=['POST'])
@@ -51,5 +51,4 @@ def index():
 
 
 if __name__ == '__main__':
-    print(app.url_map)
     app.run()
