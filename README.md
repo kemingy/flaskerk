@@ -1,5 +1,9 @@
 # Flaskerk
 
+[![Build Status](https://travis-ci.com/kemingy/flaskerk.svg?branch=master)](https://travis-ci.com/kemingy/flaskerk)
+![GitHub](https://img.shields.io/github/license/kemingy/flaskerk)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flaskerk)
+
 Provide OpenAPI document and validation for flask service.
 
 Mainly built for Machine Learning Model services.
