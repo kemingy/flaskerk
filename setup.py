@@ -13,8 +13,8 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 
 
 setup(
-    name='flask-openapi',
-    version='0.0.1',
+    name='flaskerk',
+    version='0.1.0',
     author='Keming Yang',
     author_email='kemingy94@gmail.com',
     description='',
@@ -29,6 +29,7 @@ setup(
         'Operating System :: OS Indenpendent',
     ],
     install_requires=requires,
+    zip_safe=False,
     extras_require={},
     entry_points={
         'console_scripts': [],
