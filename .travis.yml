@@ -6,10 +6,12 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install -r requirements_docs.txt
+  - pip install flake8
   - pip install .
 
 script:
   - make test
+  - flake8
 
 after_success:
   - make doc
