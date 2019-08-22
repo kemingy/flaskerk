@@ -6,3 +6,6 @@ Doc
 
 .. automodule:: flaskerk.config
    :members:
+
+.. automodule:: flaskerk.exception
+   :members:

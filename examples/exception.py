@@ -23,7 +23,7 @@ class Response(BaseModel):
     )
 
 
-# define customized error
+# define customized exception
 e555 = HTTPException(code=555, msg='random error')
 
 
