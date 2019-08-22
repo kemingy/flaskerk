@@ -1,6 +1,6 @@
 from functools import wraps
 from pydantic import ValidationError, BaseModel
-from flask import Blueprint, abort, request, jsonify
+from flask import Blueprint, abort, request, jsonify, make_response
 
 from flaskerk.config import default_config
 from flaskerk.view import APIview
@@ -25,8 +25,6 @@ class Flaskerk:
     def init_app(self, app):
         self.app = app
         self.update_config()
-        self.models[HTTPValidationError.__name__] = HTTPValidationError.schema()
-        self.models[HTTPException.__name__] = HTTPException.schema()
         self.register()
         self.parse_path()
         app.openapi = self
@@ -117,13 +115,13 @@ class Flaskerk:
                         },
                         '422': {
                             'description': 'Validation Error',
-                            'content': {
-                                'application/json': {
-                                    'schema': {
-                                        '$ref': '#/components/schemas/HTTPValidationError',
-                                    }
-                                }
-                            }
+                            # 'content': {
+                            #     'application/json': {
+                            #         'schema': {
+                            #             '$ref': '#/components/schemas/HTTPValidationError',
+                            #         }
+                            #     }
+                            # }
                         },
                     }
                 else:
@@ -142,11 +140,11 @@ class Flaskerk:
                     for code, msg in func.expt.items():
                         spec['responses'][str(code)] = {
                             'description': msg,
-                            'content': {
-                                'application/json': {
-                                    'schema': {}
-                                }
-                            }
+                            # 'content': {
+                            #     'application/json': {
+                            #         'schema': {}
+                            #     }
+                            # }
                         }
 
                 routes[str(rule)][method.lower()] = spec
@@ -179,7 +177,10 @@ class Flaskerk:
             @wraps(func)
             def validate_request(*args, **kwargs):
                 if query and not issubclass(query, BaseModel):
-                    abort(422, 'Unsupported request data type.')
+                    abort(make_response(
+                        jsonify(message='Unsupported request data type.'),
+                        500,
+                    ))
 
                 try:
                     json_obj = request.get_json()
@@ -187,14 +188,17 @@ class Flaskerk:
                         json_obj = {}
                     model = query(**json_obj) if query else {}
                 except ValidationError as err:
-                    abort(422, err)
+                    abort(make_response(jsonify(message=str(err)), 422))
                 except Exception:
                     raise
 
                 request.query = model
                 response = func(*args, **kwargs)
                 if resp and not isinstance(response, resp):
-                    abort(500, 'Wrong response type produced by server.')
+                    abort(make_response(
+                        jsonify(message='Wrong response type produced by server.'),
+                        500,
+                    ))
 
                 return jsonify(**response.dict()) if resp else response
 
@@ -207,8 +211,7 @@ class Flaskerk:
 
             code_msg = {}
             for e in expt:
-                if not isinstance(e, HTTPException):
-                    abort(500, 'Wrong exception instance.')
+                assert isinstance(e, HTTPException)
                 code_msg[e.code] = e.msg
 
             if code_msg:

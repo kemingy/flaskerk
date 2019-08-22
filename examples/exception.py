@@ -3,6 +3,7 @@ from pydantic import BaseModel, Schema
 from random import random
 
 from flaskerk import Flaskerk, HTTPException
+# from werkzeug.exceptions import HTTPException
 
 
 app = Flask(__name__)
@@ -23,7 +24,7 @@ class Response(BaseModel):
 
 
 @app.route('/ping')
-@api.validate(expt=[HTTPException(code=444, msg='random error')])
+@api.validate(expt=[HTTPException(code=555, msg='random error')])
 def index():
     if random() < 0.5:
         abort(555)
