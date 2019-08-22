@@ -160,6 +160,7 @@ class Flaskerk:
 
         :param query: ``pydantic.BaseModel`` schema for request
         :param resp: ``pydantic.BaseModel`` schema for response
+        :param expt: List of :class:`flaskerk.exception.HTTPException`
         """
         def decorate_validate_request(func):
             @wraps(func)
