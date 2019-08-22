@@ -1,21 +1,23 @@
 from functools import wraps
 from pydantic import ValidationError, BaseModel
-from flask import Blueprint, abort, request, jsonify
+from flask import Blueprint, abort, request, jsonify, make_response
 
 from flaskerk.config import default_config
 from flaskerk.view import APIview
-from flaskerk.exception import HTTPValidationError
+from flaskerk.exception import HTTPException
 
 
 class Flaskerk:
     """
     :param app: Flask app instance
-
+    :param configs: key-value pairs in :class:`flaskerk.config.Config`
 
     """
-    def __init__(self, app, config=None):
+    def __init__(self, app, **configs):
         self.models = {}
-        self.config = config or default_config
+        self.config = default_config
+        for key, value in configs.items():
+            setattr(self.config, key, value)
 
         if app:
             self.init_app(app)
@@ -23,7 +25,6 @@ class Flaskerk:
     def init_app(self, app):
         self.app = app
         self.update_config()
-        self.models[HTTPValidationError.__name__] = HTTPValidationError.schema()
         self.register()
         self.parse_path()
         app.openapi = self
@@ -84,12 +85,12 @@ class Flaskerk:
                 if method in ['HEAD', 'OPTIONS']:
                     continue
 
-                has_schema = hasattr(func, 'query') or hasattr(func, 'resp')
                 spec = {
                     'summary': func.__name__.capitalize(),
                     'operationID': func.__name__ + '__' + method.lower(),
                 }
-                if has_schema:
+
+                if hasattr(func, 'query'):
                     spec['requestBody'] = {
                         'content': {
                             'application/json': {
@@ -99,6 +100,8 @@ class Flaskerk:
                             }
                         }
                     }
+
+                if hasattr(func, 'resp'):
                     spec['responses'] = {
                         '200': {
                             'description': 'Successful Response',
@@ -112,13 +115,6 @@ class Flaskerk:
                         },
                         '422': {
                             'description': 'Validation Error',
-                            'content': {
-                                'application/json': {
-                                    'schema': {
-                                        '$ref': '#/components/schemas/HTTPValidationError',
-                                    }
-                                }
-                            }
                         },
                     }
                 else:
@@ -132,6 +128,12 @@ class Flaskerk:
                             }
                         }
                     }
+
+                if hasattr(func, 'expt'):
+                    for code, msg in func.expt.items():
+                        spec['responses'][str(code)] = {
+                            'description': msg,
+                        }
 
                 routes[str(rule)][method.lower()] = spec
 
@@ -152,40 +154,58 @@ class Flaskerk:
         }
         self.config.data = data
 
-    def validate(self, query, resp):
+    def validate(self, query=None, resp=None, expt=[]):
         """
         validate JSON data according to Model schema
 
         :param query: ``pydantic.BaseModel`` schema for request
         :param resp: ``pydantic.BaseModel`` schema for response
+        :param expt: List of :class:`flaskerk.exception.HTTPException`
         """
         def decorate_validate_request(func):
             @wraps(func)
             def validate_request(*args, **kwargs):
-                if not issubclass(query, BaseModel):
-                    abort(422, 'Unsupported request data type.')
+                if query and not issubclass(query, BaseModel):
+                    abort(make_response(
+                        jsonify(message='Unsupported request data type.'),
+                        500,
+                    ))
 
                 try:
                     json_obj = request.get_json()
                     if json_obj is None:
                         json_obj = {}
-                    model = query(**json_obj)
+                    model = query(**json_obj) if query else {}
                 except ValidationError as err:
-                    abort(422, err)
+                    abort(make_response(jsonify(message=str(err)), 422))
                 except Exception:
                     raise
 
                 request.query = model
                 response = func(*args, **kwargs)
-                if not isinstance(response, resp):
-                    abort(500, 'Wrong response type produced by server.')
+                if resp and not isinstance(response, resp):
+                    abort(make_response(
+                        jsonify(message='Wrong response type produced by server.'),
+                        500,
+                    ))
 
-                return jsonify(**response.dict())
+                return jsonify(**response.dict()) if resp else response
 
-            self.models[query.__name__] = query.schema()
-            self.models[resp.__name__] = resp.schema()
-            validate_request.query = query.__name__
-            validate_request.resp = resp.__name__
+            if query:
+                self.models[query.__name__] = query.schema()
+                validate_request.query = query.__name__
+            if resp:
+                self.models[resp.__name__] = resp.schema()
+                validate_request.resp = resp.__name__
+
+            code_msg = {}
+            for e in expt:
+                assert isinstance(e, HTTPException)
+                code_msg[e.code] = e.msg
+
+            if code_msg:
+                validate_request.expt = code_msg
+
             return validate_request
         return decorate_validate_request
 
