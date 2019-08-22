@@ -1,3 +1,9 @@
-from flaskerk.base import Flaskerk  # noqa: F401
+from flaskerk.base import Flaskerk
+from flaskerk.exception import HTTPException
 
 __version__ = '0.1.0'
+
+__all__ = [
+    Flaskerk,
+    HTTPException,
+]
