@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>flaskerk.exception &#8212; flaskerk  documentation</title>
+    <link rel="stylesheet" href="../../_static/flask.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <script>DOCUMENTATION_OPTIONS.URL_ROOT = '../../';</script>
+   
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">flaskerk  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for flaskerk.exception</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="k">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">validator</span>
+<span class="kn">from</span> <span class="nn">pydantic.dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">_aborter</span><span class="p">,</span> <span class="n">default_exceptions</span>
+<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">HTTPException</span> <span class="k">as</span> <span class="n">WerkzeugException</span>
+<span class="kn">from</span> <span class="nn">werkzeug.http</span> <span class="k">import</span> <span class="n">HTTP_STATUS_CODES</span>
+
+
+<span class="k">class</span> <span class="nc">HTTPValidationError</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+        <span class="mi">422</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;HTTP response status code&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Unprocessable Entity&#39;</span>
+
+
+<div class="viewcode-block" id="HTTPException"><a class="viewcode-back" href="../../doc.html#flaskerk.exception.HTTPException">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">HTTPException</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    HTTP Exceptions.</span>
+
+<span class="sd">    :param int code: HTTP status code</span>
+<span class="sd">    :param str msg: description</span>
+
+<span class="sd">    If you are using default code like 403, 404, 500 ..., you can ignore the</span>
+<span class="sd">    ``msg`` parameter and this module will use default description.</span>
+
+<span class="sd">    If you want to define your own code and description, you must offer ``msg``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">gt</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">lt</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;HTTP response status code&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@validator</span><span class="p">(</span><span class="s1">&#39;msg&#39;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">always</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">set_as_default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;code&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values</span> <span class="ow">or</span> <span class="n">values</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_exceptions</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid default HTTP status code.&#39;</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">default_exceptions</span><span class="p">[</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">description</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+    <span class="k">def</span> <span class="nf">__post_init_post_parse__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_aborter</span><span class="o">.</span><span class="n">mapping</span><span class="p">:</span>
+            <span class="n">_aborter</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
+                <span class="n">f</span><span class="s1">&#39;NewHTTPException_</span><span class="si">{self.code}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">WerkzeugException</span><span class="p">,</span> <span class="p">),</span>
+                <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">HTTP_STATUS_CODES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+  <span id="sidebar-top"></span>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  
+    
+  
+<h3>Navigation</h3>
+<ul>
+  <li><a href="../../index.html">Overview</a>
+    <ul>
+      <li><a href="../index.html">Module code</a>
+        
+          
+          </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Keming.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  <script type="text/javascript" src="../../_static/version_warning_offset.js"></script>
+
+  </body>
+</html>
