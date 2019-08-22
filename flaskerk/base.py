@@ -4,7 +4,7 @@ from flask import Blueprint, abort, request, jsonify, make_response
 
 from flaskerk.config import default_config
 from flaskerk.view import APIview
-from flaskerk.exception import HTTPValidationError, HTTPException
+from flaskerk.exception import HTTPException
 
 
 class Flaskerk:
@@ -115,13 +115,6 @@ class Flaskerk:
                         },
                         '422': {
                             'description': 'Validation Error',
-                            # 'content': {
-                            #     'application/json': {
-                            #         'schema': {
-                            #             '$ref': '#/components/schemas/HTTPValidationError',
-                            #         }
-                            #     }
-                            # }
                         },
                     }
                 else:
@@ -140,11 +133,6 @@ class Flaskerk:
                     for code, msg in func.expt.items():
                         spec['responses'][str(code)] = {
                             'description': msg,
-                            # 'content': {
-                            #     'application/json': {
-                            #         'schema': {}
-                            #     }
-                            # }
                         }
 
                 routes[str(rule)][method.lower()] = spec

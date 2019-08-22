@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, make_response
 from pydantic import BaseModel, Schema
 from random import random
 
@@ -23,19 +23,23 @@ class Response(BaseModel):
     )
 
 
+# define customized error
+e555 = HTTPException(code=555, msg='random error')
+
+
 @app.route('/ping')
-@api.validate(expt=[HTTPException(code=555, msg='random error')])
+@api.validate(expt=[e555])
 def index():
     if random() < 0.5:
-        abort(555)
+        abort(make_response(jsonify('lucky for you'), 555))
     return jsonify('pong')
 
 
 @app.route('/api/inference', methods=['POST'])
-@api.validate(Query, Response, [HTTPException(code=429, msg='too many requests')])
+@api.validate(Query, Response, [HTTPException(code=429)])
 def inference():
     if random() < 0.5:
-        abort(429)
+        abort(make_response(jsonify('too much request, wait a second'), 429))
     query = request.query
     return Response(label=(len(query.text) % 10), score=random())
 
