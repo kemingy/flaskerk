@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Schema
+from pydantic import BaseModel, Schema, validator
 from pydantic.dataclasses import dataclass
-from werkzeug.exceptions import _aborter
+from werkzeug.exceptions import _aborter, default_exceptions
 from werkzeug.exceptions import HTTPException as WerkzeugException
 from werkzeug.http import HTTP_STATUS_CODES
 
@@ -21,16 +21,21 @@ class HTTPException:
         lt=1000,
         description='HTTP response status code',
     )
-    msg: str = Schema(
-        ...,
-    )
+    msg: str = None
+
+    @validator('msg', pre=True, always=True)
+    def set_as_default(cls, v, values, **kwargs):
+        if v is None:
+            if 'code' not in values or values['code'] not in default_exceptions:
+                raise ValueError('Invalid default HTTP status code.')
+            v = default_exceptions[values['code']].description
+        return v
 
     def __post_init_post_parse__(self):
         if self.code not in _aborter.mapping:
             _aborter.mapping[self.code] = type(
-                f'NewHttpException_{self.code}',
+                f'NewHTTPException_{self.code}',
                 (WerkzeugException, ),
                 {'code': self.code, 'description': self.msg}
             )
             HTTP_STATUS_CODES[self.code] = self.msg
-            print('[=] register exception: ', self.code)
