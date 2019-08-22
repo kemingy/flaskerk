@@ -21,7 +21,9 @@ class HTTPException:
     :param int code: HTTP status code
     :param str msg: description
 
-    If you are using default code like 403, 404, 500 ..., you can ignore the
+    .. _code: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
+    If you are using default code_ like 403, 404, 500 ..., you can ignore the
     ``msg`` parameter and this module will use default description.
 
     If you want to define your own code and description, you must offer ``msg``.
