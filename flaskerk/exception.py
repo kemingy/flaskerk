@@ -27,6 +27,17 @@ class HTTPException:
     ``msg`` parameter and this module will use default description.
 
     If you want to define your own code and description, you must offer ``msg``.
+
+    examples:
+
+    .. code-block:: python
+
+       from flaskerk import HTTPException
+       code404 = HTTPException(code=404)
+       # with customized discription
+       code403 = HTTPException(code=403, msg='IP is blocked.')
+       # customized code
+       code777 = HTTPException(code=777, msg='bad luck')
     """
     code: int = Schema(
         ...,

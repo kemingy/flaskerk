@@ -12,7 +12,17 @@ class Flaskerk:
     :param app: Flask app instance
     :param configs: key-value pairs in :class:`flaskerk.config.Config`
 
+    example:
+
+    .. code-block:: python
+       
+       from flask import Flask
+       from flaskerk import Flaskerk
+
+       app = Flask(__name__)
+       api = Flaskerk(app, version='0.2', title='Machine Translation service')
     """
+
     def __init__(self, app, **configs):
         self.models = {}
         self.config = default_config
@@ -158,9 +168,30 @@ class Flaskerk:
         """
         validate JSON data according to Model schema
 
-        :param query: ``pydantic.BaseModel`` schema for request
+        :param query: ``pydantic.BaseModel`` schema for request. The parsed
+                      data will store in :class:`flask.request.query`.
         :param resp: ``pydantic.BaseModel`` schema for response
         :param expt: List of :class:`flaskerk.exception.HTTPException`
+
+        .. code-block:: python
+
+           from pydantic import BaseModel
+           from flask import request, jsonify
+
+           class Query(BaseModel):
+               text: str
+               limit: int
+
+           @app.route('/api/predict', methods=['POST'])
+           @api.validate(query=Query)
+           def predict():
+               query = request.query
+               print(query.text, query.limit)
+               return jsonify(is_spam=True)
+
+        For more examples, check examples_.
+
+        .. _examples: https://github.com/kemingy/flaskerk/tree/master/examples
         """
         def decorate_validate_request(func):
             @wraps(func)
