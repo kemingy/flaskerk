@@ -15,7 +15,7 @@ class Flaskerk:
     example:
 
     .. code-block:: python
-       
+
        from flask import Flask
        from flaskerk import Flaskerk
 
