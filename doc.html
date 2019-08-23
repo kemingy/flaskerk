@@ -53,6 +53,14 @@
 </ul>
 </dd>
 </dl>
+<p>example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">flaskerk</span> <span class="kn">import</span> <span class="n">Flaskerk</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">Flaskerk</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;0.2&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Machine Translation service&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="flaskerk.base.Flaskerk.generate_spec">
 <code class="sig-name descname">generate_spec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk.generate_spec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk.generate_spec" title="Permalink to this definition">¶</a></dt>
@@ -78,12 +86,29 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>query</strong> – <code class="docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code> schema for request</p></li>
+<li><p><strong>query</strong> – <code class="docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code> schema for request. The parsed
+data will store in <code class="xref py py-class docutils literal notranslate"><span class="pre">flask.request.query</span></code>.</p></li>
 <li><p><strong>resp</strong> – <code class="docutils literal notranslate"><span class="pre">pydantic.BaseModel</span></code> schema for response</p></li>
 <li><p><strong>expt</strong> – List of <a class="reference internal" href="#flaskerk.exception.HTTPException" title="flaskerk.exception.HTTPException"><code class="xref py py-class docutils literal notranslate"><span class="pre">flaskerk.exception.HTTPException</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+
+<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/api/predict&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@api.validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">predict</span><span class="p">():</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">is_spam</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more examples, check <a class="reference external" href="https://github.com/kemingy/flaskerk/tree/master/examples">examples</a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -155,6 +180,15 @@
 <p>If you are using default <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">code</a> like 403, 404, 500 …, you can ignore the
 <code class="docutils literal notranslate"><span class="pre">msg</span></code> parameter and this module will use default description.</p>
 <p>If you want to define your own code and description, you must offer <code class="docutils literal notranslate"><span class="pre">msg</span></code>.</p>
+<p>examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flaskerk</span> <span class="kn">import</span> <span class="n">HTTPException</span>
+<span class="n">code404</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+<span class="c1"># with customized discription</span>
+<span class="n">code403</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;IP is blocked.&#39;</span><span class="p">)</span>
+<span class="c1"># customized code</span>
+<span class="n">code777</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">777</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;bad luck&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

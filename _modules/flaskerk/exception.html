@@ -67,6 +67,17 @@
 <span class="sd">    ``msg`` parameter and this module will use default description.</span>
 
 <span class="sd">    If you want to define your own code and description, you must offer ``msg``.</span>
+
+<span class="sd">    examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       from flaskerk import HTTPException</span>
+<span class="sd">       code404 = HTTPException(code=404)</span>
+<span class="sd">       # with customized discription</span>
+<span class="sd">       code403 = HTTPException(code=403, msg=&#39;IP is blocked.&#39;)</span>
+<span class="sd">       # customized code</span>
+<span class="sd">       code777 = HTTPException(code=777, msg=&#39;bad luck&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span>

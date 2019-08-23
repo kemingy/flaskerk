@@ -52,7 +52,17 @@
 <span class="sd">    :param app: Flask app instance</span>
 <span class="sd">    :param configs: key-value pairs in :class:`flaskerk.config.Config`</span>
 
+<span class="sd">    example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       from flask import Flask</span>
+<span class="sd">       from flaskerk import Flaskerk</span>
+
+<span class="sd">       app = Flask(__name__)</span>
+<span class="sd">       api = Flaskerk(app, version=&#39;0.2&#39;, title=&#39;Machine Translation service&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="o">**</span><span class="n">configs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">default_config</span>
@@ -198,9 +208,30 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        validate JSON data according to Model schema</span>
 
-<span class="sd">        :param query: ``pydantic.BaseModel`` schema for request</span>
+<span class="sd">        :param query: ``pydantic.BaseModel`` schema for request. The parsed</span>
+<span class="sd">                      data will store in :class:`flask.request.query`.</span>
 <span class="sd">        :param resp: ``pydantic.BaseModel`` schema for response</span>
 <span class="sd">        :param expt: List of :class:`flaskerk.exception.HTTPException`</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           from pydantic import BaseModel</span>
+<span class="sd">           from flask import request, jsonify</span>
+
+<span class="sd">           class Query(BaseModel):</span>
+<span class="sd">               text: str</span>
+<span class="sd">               limit: int</span>
+
+<span class="sd">           @app.route(&#39;/api/predict&#39;, methods=[&#39;POST&#39;])</span>
+<span class="sd">           @api.validate(query=Query)</span>
+<span class="sd">           def predict():</span>
+<span class="sd">               query = request.query</span>
+<span class="sd">               print(query.text, query.limit)</span>
+<span class="sd">               return jsonify(is_spam=True)</span>
+
+<span class="sd">        For more examples, check examples_.</span>
+
+<span class="sd">        .. _examples: https://github.com/kemingy/flaskerk/tree/master/examples</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">decorate_validate_request</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
