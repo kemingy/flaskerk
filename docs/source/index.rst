@@ -13,11 +13,19 @@ Mainly built for Machine Learning Model services.
 Features
 --------
 
--  [x] JSON data(request&response) validation with pydantic
--  [x] Redoc UI
--  [x] OpenAPI spec
--  [ ] Swagger UI
--  [ ] support flask url path validation
+- [x] JSON data(request&response) validation with pydantic_
+- [x] support HTTP exceptions (default&customized)
+- [x] OpenAPI_ spec
+- [x] Redoc_ UI
+- [ ] Swagger_ UI
+- [ ] support flask url path validation
+- [ ] support header validation
+- [ ] support cookie validation
+
+.. _pydantic: https://github.com/samuelcolvin/pydantic/
+.. _openapi: https://github.com/OAI/OpenAPI-Specification
+.. _redoc: https://github.com/Redocly/redoc
+.. _swagger: https://github.com/swagger-api/swagger-ui
 
 Quick Start
 -----------
