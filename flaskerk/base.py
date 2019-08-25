@@ -114,7 +114,7 @@ class Flaskerk:
 
                 if hasattr(func, 'query'):
                     parameters.append({
-                        'name': func.query.__name__,
+                        'name': func.query,
                         'in': 'query',
                         'required': True,
                         'schema': {
@@ -157,7 +157,7 @@ class Flaskerk:
                             'description': msg,
                         }
 
-                routes[str(rule)][method.lower()] = spec
+                routes[path][method.lower()] = spec
 
         data = {
             'openapi': self.config.openapi_veresion,
@@ -216,10 +216,10 @@ class Flaskerk:
 
                 try:
                     # validate query
-                    args = request.args
-                    if not args:
-                        args = {}
-                    json_query = query(**args) if query else None
+                    arg = request.args
+                    if not arg:
+                        arg = {}
+                    json_query = query(**arg) if query else None
 
                     # validate data
                     json_obj = request.get_json()
@@ -245,7 +245,7 @@ class Flaskerk:
             ):
                 if schema:
                     self.models[schema.__name__] = schema.schema()
-                    setattr(validate_request, name, schema.schema())
+                    setattr(validate_request, name, schema.__name__)
 
             # store exception for doc
             code_msg = {}

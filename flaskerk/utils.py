@@ -1,14 +1,18 @@
 from flask import abort, make_response, jsonify
 from werkzeug.routing import parse_rule, parse_converter_args
+from werkzeug.exceptions import default_exceptions
 
 
-def abort_json(code: int, msg: str):
+def abort_json(code: int, msg: str = ''):
     """
     abort as a JSON response
 
     :param int code: HTTP status code
     :param str msg: description for this abort
     """
+    if not msg:
+        assert code in default_exceptions
+        msg = default_exceptions[code].description
     abort(make_response(jsonify(message=msg), code))
 
 
@@ -20,32 +24,52 @@ def parse_url(path: str):
     parameters = []
 
     for converter, arguments, variable in parse_rule(path):
+        subs.append(variable)
         if converter is None:
-            subs.append(variable)
+            continue
+        if arguments:
+            args, kwargs = parse_converter_args(arguments)
         else:
-            if arguments:
-                args, kwargs = parse_converter_args(arguments)
-            else:
-                args, kwargs = [], {}
-            schema = None
-            if converter == 'any':
-                schema = {
-                    'type': 'array',
-                    'items': {
-                        'type': 'string',
-                        'enum': args,
-                    }
+            args, kwargs = [], {}
+        schema = None
+        if converter == 'any':
+            schema = {
+                'type': 'array',
+                'items': {
+                    'type': 'string',
+                    'enum': args,
                 }
-            elif converter == 'int':
-                schema = {
-                    'type': 'int',
-                }
+            }
+        elif converter == 'int':
+            schema = {
+                'type': 'integer',
+                'format': 'int32',
+            }
+            if 'max' in kwargs:
+                schema['maximum'] = kwargs['max']
+            if 'min' in kwargs:
+                schema['minimum'] = kwargs['min']
+        elif converter == 'float':
+            schema = {
+                'type': 'number',
+                'format': 'float',
+            }
+        elif converter == 'uuid':
+            schema = {
+                'type': 'string',
+                'format': 'uuid',
+            }
+        elif converter == 'path':
+            schema = {
+                'type': 'string',
+                'format': 'path',
+            }
 
-            parameters.append({
-                'name': variable,
-                'in': 'path',
-                'required': True,
-                'schema': schema,
-            })
+        parameters.append({
+            'name': variable,
+            'in': 'path',
+            'required': True,
+            'schema': schema,
+        })
 
     return ''.join(subs), parameters
