@@ -15,7 +15,7 @@ Mainly built for Machine Learning Model services.
 - [x] [OpenAPI spec](https://github.com/OAI/OpenAPI-Specification)
 - [x] [Redoc UI](https://github.com/Redocly/redoc)
 - [ ] [Swagger UI](https://github.com/swagger-api/swagger-ui)
-- [ ] support flask url path validation
+- [x] support flask url path validation
 - [ ] support header validation
 - [ ] support cookie validation
 
@@ -24,35 +24,45 @@ Mainly built for Machine Learning Model services.
 install with `pip install flaskerk` (Python 3.6+)
 
 ```py
-from typing import List
 from flask import Flask, request
-from flaskerk import Flaskerk
-from pydantic import BaseModel
-
-class Query(BaseModel):
-    name: str
-    uid: str
-    limit: int = 5
-
-class Response(BaseModel):
-    users: List[str]
+from pydantic import BaseModel, Schema
+from random import random
+from flaskerk import Flaskerk, HTTPException, abort_json
 
 app = Flask(__name__)
 api = Flaskerk(app)
 
-@app.route('/api/recommend', methods=['POST'])
-@api.validate(query=Query, resp=Response)
-def recommend():
-    # algorithm here
-    user = request.query
-    print(user.name, user.uid)
-    return Response(users=['xxx'] * user.limit)
+class Query(BaseModel):
+    text: str
+
+class Response(BaseModel):
+    label: int
+    score: float = Schema(
+        ...,
+        gt=0,
+        lt=1,
+    )
+
+class Data(BaseModel):
+    uid: str
+    limit: int
+    vip: bool
+
+@app.route('/api/predict/<string(length=2):source>/<string(length=2):target>', methods=['POST'])
+@api.validate(query=Query, data=Data, resp=Response, x=[HTTPException(403)])
+def predict(source, target):
+    print(f'=> from {source} to {target}')  # path
+    print(f'Data: {request.json_data}')  # Data
+    print(f'Query: {request.query}')  # Query
+    if random() < 0.5:
+        abort_json(403)
+    return Response(label=int(10 * random()), score=random())
 
 if __name__ == '__main__':
     app.run()
 ```
 
-try it with `http POST :5000/api/recommend name='hello' uid='uuuuu'` or `curl -X POST -H "Content-Type: application/json" -d '{"name"="hello", "uid"="uuuuu"}' http://127.0.0.1:5000/api/recommend`
+try it with `http POST ':5000/api/predict/zh/en?text=hello' uid=0b01001001 limit=5 vip=true`
 
 Open the docs in http://127.0.0.1:5000/docs .
 
