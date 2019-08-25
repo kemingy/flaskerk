@@ -52,42 +52,59 @@
 <li><p>[x] <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification">OpenAPI</a> spec</p></li>
 <li><p>[x] <a class="reference external" href="https://github.com/Redocly/redoc">Redoc</a> UI</p></li>
 <li><p>[ ] <a class="reference external" href="https://github.com/swagger-api/swagger-ui">Swagger</a> UI</p></li>
-<li><p>[ ] support flask url path validation</p></li>
+<li><p>[x] support flask url path validation</p></li>
 <li><p>[ ] support header validation</p></li>
 <li><p>[ ] support cookie validation</p></li>
 </ul>
 </div>
 <div class="section" id="quick-start">
 <h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span>
-<span class="kn">from</span> <span class="nn">flaskerk</span> <span class="kn">import</span> <span class="n">Flaskerk</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">random</span>
 
-<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kn">from</span> <span class="nn">flaskerk</span> <span class="kn">import</span> <span class="n">Flaskerk</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">abort_json</span>
 
-<span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">api</span> <span class="o">=</span> <span class="n">Flaskerk</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/api/recommend&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
-<span class="nd">@api.validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="n">Response</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">recommend</span><span class="p">():</span>
-    <span class="c1"># algorithm</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">users</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;xxx&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">user</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">gt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">lt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">vip</span><span class="p">:</span> <span class="nb">bool</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/api/predict/&lt;string(length=2):source&gt;/&lt;string(length=2):target&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@api.validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="n">Response</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">HTTPException</span><span class="p">(</span><span class="mi">403</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;=&gt; from {source} to {target}&#39;</span><span class="p">)</span>  <span class="c1"># path</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data: {request.json_data}&#39;</span><span class="p">)</span>  <span class="c1"># Data</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Query: {request.query}&#39;</span><span class="p">)</span>  <span class="c1"># Query</span>
+    <span class="k">if</span> <span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">abort_json</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">random</span><span class="p">()),</span> <span class="n">score</span><span class="o">=</span><span class="n">random</span><span class="p">())</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>try it with <code class="docutils literal notranslate"><span class="pre">http</span> <span class="pre">POST</span> <span class="pre">:5000/api/recommend</span> <span class="pre">name='hello'</span> <span class="pre">uid='uuuuu'</span></code></p>
+<p>try it with <code class="docutils literal notranslate"><span class="pre">http</span> <span class="pre">POST</span> <span class="pre">':5000/api/predict/zh/en?text=hello'</span> <span class="pre">uid=0b01001001</span> <span class="pre">limit=5</span> <span class="pre">vip=true</span></code></p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>

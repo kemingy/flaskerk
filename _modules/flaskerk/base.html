@@ -44,6 +44,7 @@
 
 <span class="kn">from</span> <span class="nn">flaskerk.config</span> <span class="k">import</span> <span class="n">default_config</span>
 <span class="kn">from</span> <span class="nn">flaskerk.view</span> <span class="k">import</span> <span class="n">APIview</span>
+<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="k">import</span> <span class="n">abort_json</span><span class="p">,</span> <span class="n">parse_url</span>
 <span class="kn">from</span> <span class="nn">flaskerk.exception</span> <span class="k">import</span> <span class="n">HTTPException</span>
 
 
@@ -76,7 +77,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_config</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parse_path</span><span class="p">()</span>
         <span class="n">app</span><span class="o">.</span><span class="n">openapi</span> <span class="o">=</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="Flaskerk.update_config"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -130,7 +130,8 @@
                 <span class="k">continue</span>
 
             <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">endpoint</span><span class="p">]</span>
-            <span class="n">routes</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parse_url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
+            <span class="n">routes</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">methods</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;HEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">]:</span>
                     <span class="k">continue</span>
@@ -140,16 +141,27 @@
                     <span class="s1">&#39;operationID&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
                 <span class="p">}</span>
 
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">):</span>
                     <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;requestBody&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                         <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
                                 <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
-                                    <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.query}</span><span class="s1">&#39;</span>
+                                    <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.data}</span><span class="s1">&#39;</span>
                                 <span class="p">}</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
+
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">):</span>
+                    <span class="n">parameters</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+                        <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.query}</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">})</span>
+                <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
 
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;resp&#39;</span><span class="p">):</span>
                     <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -185,7 +197,7 @@
                             <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
                         <span class="p">}</span>
 
-                <span class="n">routes</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)][</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">spec</span>
+                <span class="n">routes</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">spec</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;openapi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">openapi_veresion</span><span class="p">,</span>
@@ -204,14 +216,15 @@
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span></div>
 
-<div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">expt</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        validate JSON data according to Model schema</span>
 
 <span class="sd">        :param query: ``pydantic.BaseModel`` schema for request. The parsed</span>
 <span class="sd">                      data will store in :class:`flask.request.query`.</span>
 <span class="sd">        :param resp: ``pydantic.BaseModel`` schema for response</span>
-<span class="sd">        :param expt: List of :class:`flaskerk.exception.HTTPException`</span>
+<span class="sd">        :param data: ```pydantic.BaseModel` schema for JSON data</span>
+<span class="sd">        :param x: List of :class:`flaskerk.exception.HTTPException`</span>
 
 <span class="sd">        .. code-block:: python</span>
 
@@ -223,10 +236,10 @@
 <span class="sd">               limit: int</span>
 
 <span class="sd">           @app.route(&#39;/api/predict&#39;, methods=[&#39;POST&#39;])</span>
-<span class="sd">           @api.validate(query=Query)</span>
+<span class="sd">           @api.validate(data=Query)</span>
 <span class="sd">           def predict():</span>
-<span class="sd">               query = request.query</span>
-<span class="sd">               print(query.text, query.limit)</span>
+<span class="sd">               data = request.json_data</span>
+<span class="sd">               print(data.text, data.limit)</span>
 <span class="sd">               return jsonify(is_spam=True)</span>
 
 <span class="sd">        For more examples, check examples_.</span>
@@ -237,51 +250,54 @@
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">validate_request</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">query</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-                    <span class="n">abort</span><span class="p">(</span><span class="n">make_response</span><span class="p">(</span>
-                        <span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;Unsupported request data type.&#39;</span><span class="p">),</span>
-                        <span class="mi">500</span><span class="p">,</span>
-                    <span class="p">))</span>
+                    <span class="n">abort_json</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Unsupported request query type.&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+                    <span class="n">abort_json</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Unsupported request data type.&#39;</span><span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># validate query</span>
+                    <span class="n">arg</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">arg</span><span class="p">:</span>
+                        <span class="n">arg</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">json_query</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="o">**</span><span class="n">arg</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="kc">None</span>
+
+                    <span class="c1"># validate data</span>
                     <span class="n">json_obj</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
                     <span class="k">if</span> <span class="n">json_obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">json_obj</span> <span class="o">=</span> <span class="p">{}</span>
-                    <span class="n">model</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="o">**</span><span class="n">json_obj</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="p">{}</span>
+                    <span class="n">json_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="o">**</span><span class="n">json_obj</span><span class="p">)</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                     <span class="n">abort</span><span class="p">(</span><span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)),</span> <span class="mi">422</span><span class="p">))</span>
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">raise</span>
 
-                <span class="n">request</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">model</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">json_query</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">json_data</span> <span class="o">=</span> <span class="n">json_data</span>
                 <span class="n">response</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">resp</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
-                    <span class="n">abort</span><span class="p">(</span><span class="n">make_response</span><span class="p">(</span>
-                        <span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;Wrong response type produced by server.&#39;</span><span class="p">),</span>
-                        <span class="mi">500</span><span class="p">,</span>
-                    <span class="p">))</span>
+                    <span class="n">abort_json</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Wrong response type produced by server.&#39;</span><span class="p">)</span>
 
                 <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span> <span class="k">if</span> <span class="n">resp</span> <span class="k">else</span> <span class="n">response</span>
 
-            <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">query</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
-                <span class="n">validate_request</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="vm">__name__</span>
-            <span class="k">if</span> <span class="n">resp</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">resp</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
-                <span class="n">validate_request</span><span class="o">.</span><span class="n">resp</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="c1"># register schemas to this function</span>
+            <span class="k">for</span> <span class="n">schema</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">resp</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;resp&#39;</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">schema</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">validate_request</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">schema</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
+            <span class="c1"># store exception for doc</span>
             <span class="n">code_msg</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">expt</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">)</span>
                 <span class="n">code_msg</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">msg</span>
 
             <span class="k">if</span> <span class="n">code_msg</span><span class="p">:</span>
-                <span class="n">validate_request</span><span class="o">.</span><span class="n">expt</span> <span class="o">=</span> <span class="n">code_msg</span>
+                <span class="n">validate_request</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">code_msg</span>
 
             <span class="k">return</span> <span class="n">validate_request</span>
-        <span class="k">return</span> <span class="n">decorate_validate_request</span></div>
-
-    <span class="k">def</span> <span class="nf">parse_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+        <span class="k">return</span> <span class="n">decorate_validate_request</span></div></div>
 </pre></div>
 
           </div>
