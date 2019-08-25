@@ -15,7 +15,7 @@ Mainly built for Machine Learning Model services.
 - [x] [OpenAPI spec](https://github.com/OAI/OpenAPI-Specification)
 - [x] [Redoc UI](https://github.com/Redocly/redoc)
 - [ ] [Swagger UI](https://github.com/swagger-api/swagger-ui)
-- [ ] support flask url path validation
+- [x] support flask url path validation
 - [ ] support header validation
 - [ ] support cookie validation
 
