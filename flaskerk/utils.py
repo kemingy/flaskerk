@@ -64,6 +64,10 @@ def parse_url(path: str):
                 'type': 'string',
                 'format': 'path',
             }
+        elif converter == 'string':
+            schema = {
+                'type': 'string',
+            }
 
         parameters.append({
             'name': variable,
