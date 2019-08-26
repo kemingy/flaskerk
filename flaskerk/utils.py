@@ -18,7 +18,11 @@ def abort_json(code: int, msg: str = ''):
 
 def parse_url(path: str):
     """
-    parse Flask route url to get the normal url path and parameter type
+    Parsing Flask route url to get the normal url path and parameter type.
+
+    Based on Werkzeug_ builtin converters.
+
+    .. _werkzeug: https://werkzeug.palletsprojects.com/en/0.15.x/routing/#builtin-converters
     """
     subs = []
     parameters = []
@@ -64,6 +68,13 @@ def parse_url(path: str):
                 'type': 'string',
                 'format': 'path',
             }
+        elif converter == 'string':
+            schema = {
+                'type': 'string',
+            }
+            for prop in ['length', 'maxLength', 'minLength']:
+                if prop in kwargs:
+                    schema[prop] = kwargs[prop]
 
         parameters.append({
             'name': variable,
