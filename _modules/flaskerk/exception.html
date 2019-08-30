@@ -44,6 +44,8 @@
 <span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">HTTPException</span> <span class="k">as</span> <span class="n">WerkzeugException</span>
 <span class="kn">from</span> <span class="nn">werkzeug.http</span> <span class="k">import</span> <span class="n">HTTP_STATUS_CODES</span>
 
+<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="k">import</span> <span class="n">abort_json</span>
+
 
 <span class="k">class</span> <span class="nc">HTTPValidationError</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
@@ -78,6 +80,9 @@
 <span class="sd">       code403 = HTTPException(code=403, msg=&#39;IP is blocked.&#39;)</span>
 <span class="sd">       # customized code</span>
 <span class="sd">       code777 = HTTPException(code=777, msg=&#39;bad luck&#39;)</span>
+
+<span class="sd">       # abort</span>
+<span class="sd">       code777.abort()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span>
@@ -102,7 +107,13 @@
                 <span class="p">(</span><span class="n">WerkzeugException</span><span class="p">,</span> <span class="p">),</span>
                 <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">}</span>
             <span class="p">)</span>
-            <span class="n">HTTP_STATUS_CODES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span></div>
+            <span class="n">HTTP_STATUS_CODES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span>
+
+<div class="viewcode-block" id="HTTPException.abort"><a class="viewcode-back" href="../../doc.html#flaskerk.exception.HTTPException.abort">[docs]</a>    <span class="k">def</span> <span class="nf">abort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        abort as a JSON response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">abort_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
