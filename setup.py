@@ -14,7 +14,7 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 
 setup(
     name='flaskerk',
-    version='0.3.2',
+    version='0.3.3',
     author='Keming Yang',
     author_email='kemingy94@gmail.com',
     description='',
