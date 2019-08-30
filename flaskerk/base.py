@@ -183,7 +183,7 @@ class Flaskerk:
         :param query: ``pydantic.BaseModel`` schema for request. The parsed
                       data will store in :class:`flask.request.query`.
         :param resp: ``pydantic.BaseModel`` schema for response
-        :param data: ```pydantic.BaseModel` schema for JSON data
+        :param data: ``pydantic.BaseModel`` schema for JSON data
         :param x: List of :class:`flaskerk.exception.HTTPException`
 
         .. code-block:: python
