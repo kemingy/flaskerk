@@ -69,8 +69,8 @@ class HTTPException:
             )
             HTTP_STATUS_CODES[self.code] = self.msg
 
-    def abort(self):
+    def abort(self, msg=None):
         """
         abort as a JSON response
         """
-        abort_json(self.code, self.msg)
+        abort_json(self.code, msg or self.msg)
