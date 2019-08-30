@@ -4,6 +4,8 @@ from werkzeug.exceptions import _aborter, default_exceptions
 from werkzeug.exceptions import HTTPException as WerkzeugException
 from werkzeug.http import HTTP_STATUS_CODES
 
+from flaskerk.utils import abort_json
+
 
 class HTTPValidationError(BaseModel):
     code: int = Schema(
@@ -38,6 +40,9 @@ class HTTPException:
        code403 = HTTPException(code=403, msg='IP is blocked.')
        # customized code
        code777 = HTTPException(code=777, msg='bad luck')
+
+       # abort
+       code777.abort()
     """
     code: int = Schema(
         ...,
@@ -63,3 +68,9 @@ class HTTPException:
                 {'code': self.code, 'description': self.msg}
             )
             HTTP_STATUS_CODES[self.code] = self.msg
+
+    def abort(self):
+        """
+        abort as a JSON response
+        """
+        abort_json(self.code, self.msg)
