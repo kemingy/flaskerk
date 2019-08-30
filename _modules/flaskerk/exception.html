@@ -109,11 +109,11 @@
             <span class="p">)</span>
             <span class="n">HTTP_STATUS_CODES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span>
 
-<div class="viewcode-block" id="HTTPException.abort"><a class="viewcode-back" href="../../doc.html#flaskerk.exception.HTTPException.abort">[docs]</a>    <span class="k">def</span> <span class="nf">abort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HTTPException.abort"><a class="viewcode-back" href="../../doc.html#flaskerk.exception.HTTPException.abort">[docs]</a>    <span class="k">def</span> <span class="nf">abort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        abort as a JSON response</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">abort_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div></div>
+        <span class="n">abort_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
