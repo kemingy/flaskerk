@@ -3,7 +3,6 @@ from pydantic import BaseModel, Schema
 from random import random
 
 from flaskerk import Flaskerk, HTTPException
-# from werkzeug.exceptions import HTTPException
 
 
 app = Flask(__name__)
@@ -28,18 +27,22 @@ e555 = HTTPException(code=555, msg='random error')
 
 
 @app.route('/ping')
-@api.validate(expt=[e555])
+@api.validate(x=[e555])
 def index():
     if random() < 0.5:
-        abort(make_response(jsonify('lucky for you'), 555))
+        e555.abort()
     return jsonify('pong')
 
 
+# default exception
+e429 = HTTPException(code=429)
+
+
 @app.route('/api/inference', methods=['POST'])
-@api.validate(Query, Response, [HTTPException(code=429)])
+@api.validate(query=Query, resp=Response, x=[e429])
 def inference():
     if random() < 0.5:
-        abort(make_response(jsonify('too much request, wait a second'), 429))
+        e429.abort()
     query = request.query
     return Response(label=(len(query.text) % 10), score=random())
 

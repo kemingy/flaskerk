@@ -5,9 +5,9 @@ from typing import List
 from flaskerk import Flaskerk
 
 
-class Query(BaseModel):
+class Data(BaseModel):
     """
-    This is the description of the query model.
+    This is the description of the data model.
     """
     name: str
     limit: int = Schema(5, gt=1, lt=10, description='xxx')
@@ -38,11 +38,11 @@ api = Flaskerk(app)
 
 
 @app.route('/api/predict', methods=['POST'])
-@api.validate(query=Query, resp=Response)
+@api.validate(data=Data, resp=Response)
 def predict():
-    query = request.query
-    print(query.name, query.limit, query.size, query.text)
-    return Response(prob=[len(query.text)] * query.limit)
+    data = request.json_data
+    print(data.name, data.limit, data.size, data.text)
+    return Response(prob=[len(data.text)] * data.limit)
 
 
 @app.route('/')
