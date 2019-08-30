@@ -38,7 +38,7 @@ def predict(source, target):
     print(f'Data: {request.json_data}')  # Data
     print(f'Query: {request.query}')  # Query
     if random() < 0.5:
-        e403.abort()
+        e403.abort('bad luck')
     return Response(label=int(10 * random()), score=random())
 
 
