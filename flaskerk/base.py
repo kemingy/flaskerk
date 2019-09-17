@@ -27,6 +27,7 @@ class Flaskerk:
     def __init__(self, app, **configs):
         self.models = {}
         self.config = default_config
+        self.config._spec = None
         for key, value in configs.items():
             setattr(self.config, key, value)
 
@@ -58,7 +59,6 @@ class Flaskerk:
             template_folder=self.config.template_folder,
         )
 
-        self.generate_spec()
         # docs
         blueprint.add_url_rule(
             self.config.endpoint,
@@ -73,8 +73,9 @@ class Flaskerk:
         @blueprint.route(f'{self.config.endpoint}<filename>')
         def jsonfile(filename):
             if filename == self.config.filename:
-                self.generate_spec()
-                return jsonify(self.config.data)
+                if self.config._spec is None:
+                    self.generate_spec()
+                return jsonify(self.config._spec)
             abort(404)
 
         self.app.register_blueprint(blueprint)
@@ -159,6 +160,13 @@ class Flaskerk:
 
                 routes[path][method.lower()] = spec
 
+        definitions = {}
+        for _, schema in self.models.items():
+            if 'definitions' in schema:
+                for key, value in schema['definitions'].items():
+                    definitions[key] = value
+                del schema['definitions']
+
         data = {
             'openapi': self.config.openapi_veresion,
             'info': {
@@ -172,9 +180,10 @@ class Flaskerk:
                 'schemas': {
                     name: schema for name, schema in self.models.items()
                 },
-            }
+            },
+            'definitions': definitions
         }
-        self.config.data = data
+        self.config._spec = data
 
     def validate(self, query=None, data=None, resp=None, x=[]):
         """
