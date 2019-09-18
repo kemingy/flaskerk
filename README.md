@@ -27,7 +27,7 @@ install with `pip install flaskerk` (Python 3.6+)
 from flask import Flask, request
 from pydantic import BaseModel, Schema
 from random import random
-from flaskerk import Flaskerk, HTTPException, abort_json
+from flaskerk import Flaskerk, HTTPException
 
 app = Flask(__name__)
 api = Flaskerk(app)
