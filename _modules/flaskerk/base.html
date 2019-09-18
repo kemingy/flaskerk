@@ -67,6 +67,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="o">**</span><span class="n">configs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">default_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
@@ -98,7 +99,6 @@
             <span class="n">template_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">template_folder</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">generate_spec</span><span class="p">()</span>
         <span class="c1"># docs</span>
         <span class="n">blueprint</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span>
@@ -113,8 +113,9 @@
         <span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.config.endpoint}</span><span class="s1">&lt;filename&gt;&#39;</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">jsonfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">generate_spec</span><span class="p">()</span>
-                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">generate_spec</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span><span class="p">)</span>
             <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span></div>
@@ -199,6 +200,13 @@
 
                 <span class="n">routes</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">spec</span>
 
+        <span class="n">definitions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;definitions&#39;</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;definitions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">definitions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">del</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;definitions&#39;</span><span class="p">]</span>
+
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;openapi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">openapi_veresion</span><span class="p">,</span>
             <span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span>
@@ -212,9 +220,10 @@
                 <span class="s1">&#39;schemas&#39;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="n">name</span><span class="p">:</span> <span class="n">schema</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">},</span>
-            <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;definitions&#39;</span><span class="p">:</span> <span class="n">definitions</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">data</span></div>
 
 <div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
