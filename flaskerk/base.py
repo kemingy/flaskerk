@@ -152,8 +152,8 @@ class Flaskerk:
                         }
                     }
 
-                if hasattr(func, 'expt'):
-                    for code, msg in func.expt.items():
+                if hasattr(func, 'x'):
+                    for code, msg in func.x.items():
                         spec['responses'][str(code)] = {
                             'description': msg,
                         }
@@ -218,11 +218,6 @@ class Flaskerk:
         def decorate_validate_request(func):
             @wraps(func)
             def validate_request(*args, **kwargs):
-                if query and not issubclass(query, BaseModel):
-                    abort_json(500, 'Unsupported request query type.')
-                if data and not issubclass(data, BaseModel):
-                    abort_json(500, 'Unsupported request data type.')
-
                 try:
                     # validate query
                     arg = request.args
@@ -253,6 +248,7 @@ class Flaskerk:
                 (query, data, resp), ('query', 'data', 'resp')
             ):
                 if schema:
+                    assert issubclass(schema, BaseModel)
                     self.models[schema.__name__] = schema.schema()
                     setattr(validate_request, name, schema.__name__)
 
