@@ -192,8 +192,8 @@
                         <span class="p">}</span>
                     <span class="p">}</span>
 
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;expt&#39;</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="n">expt</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                         <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span>
                             <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
                         <span class="p">}</span>
@@ -258,11 +258,6 @@
         <span class="k">def</span> <span class="nf">decorate_validate_request</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">validate_request</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">query</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-                    <span class="n">abort_json</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Unsupported request query type.&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-                    <span class="n">abort_json</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Unsupported request data type.&#39;</span><span class="p">)</span>
-
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># validate query</span>
                     <span class="n">arg</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span>
@@ -293,6 +288,7 @@
                 <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">resp</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;resp&#39;</span><span class="p">)</span>
             <span class="p">):</span>
                 <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">schema</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
                     <span class="nb">setattr</span><span class="p">(</span><span class="n">validate_request</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">schema</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
