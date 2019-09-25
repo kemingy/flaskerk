@@ -136,20 +136,18 @@ class Flaskerk:
                                 }
                             }
                         },
-                        '422': {
-                            'description': 'Validation Error',
-                        },
                     }
                 else:
                     spec['responses'] = {
                         '200': {
                             'description': 'Successful Response',
-                            'content': {
-                                'application/json': {
-                                    'schema': {}
-                                }
-                            }
                         }
+                    }
+
+                if any([hasattr(func, schema)
+                        for schema in ('query', 'data', 'resp')]):
+                    spec['responses']['422'] = {
+                        'description': 'Validation Error',
                     }
 
                 if hasattr(func, 'x'):
