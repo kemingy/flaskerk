@@ -38,7 +38,7 @@ def get_label(n):
     ]
 
 
-@app.route('/api/<string(length=2):lang>', methods=['POST'])
+@app.route('/api/<lang>', methods=['POST'])
 @api.validate(data=Data, resp=Response)
 def predict(lang):
     print(f'{lang}')
