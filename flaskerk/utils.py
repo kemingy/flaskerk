@@ -28,9 +28,10 @@ def parse_url(path: str):
     parameters = []
 
     for converter, arguments, variable in parse_rule(path):
-        subs.append(variable)
         if converter is None:
+            subs.append(variable)
             continue
+        subs.append(f'{{variable}}')
         if arguments:
             args, kwargs = parse_converter_args(arguments)
         else:
