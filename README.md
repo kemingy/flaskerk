@@ -8,6 +8,8 @@ Provide OpenAPI document and validation for flask service.
 
 Mainly built for Machine Learning Model services.
 
+If you're using Falcon, check my another library [Falibrary](https://github.com/kemingy/falibrary).
+
 ## Features
 
 - [x] JSON data(request&response) validation with [pydantic](https://github.com/samuelcolvin/pydantic/)
