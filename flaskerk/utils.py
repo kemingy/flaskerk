@@ -31,7 +31,7 @@ def parse_url(path: str):
         if converter is None:
             subs.append(variable)
             continue
-        subs.append(f'{{variable}}')
+        subs.append(f'{{{variable}}}')
         if arguments:
             args, kwargs = parse_converter_args(arguments)
         else:
@@ -76,6 +76,8 @@ def parse_url(path: str):
             for prop in ['length', 'maxLength', 'minLength']:
                 if prop in kwargs:
                     schema[prop] = kwargs[prop]
+        elif converter == 'default':
+            schema = {'type': 'string'}
 
         parameters.append({
             'name': variable,
