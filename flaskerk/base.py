@@ -10,7 +10,7 @@ from flaskerk.exception import HTTPException
 
 class Flaskerk:
     """
-    :param app: Flask app instance
+    :param app: Flask app instance, you can register it later
     :param configs: key-value pairs in :class:`flaskerk.config.Config`
 
     example:
