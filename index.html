@@ -63,11 +63,11 @@
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">random</span>
 
-<span class="kn">from</span> <span class="nn">flaskerk</span> <span class="kn">import</span> <span class="n">Flaskerk</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">abort_json</span>
+<span class="kn">from</span> <span class="nn">flaskerk</span> <span class="kn">import</span> <span class="n">Flaskerk</span><span class="p">,</span> <span class="n">HTTPException</span>
 
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-<span class="n">api</span> <span class="o">=</span> <span class="n">Flaskerk</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">Flaskerk</span><span class="p">()</span>
 
 
 <span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -89,18 +89,22 @@
     <span class="n">vip</span><span class="p">:</span> <span class="nb">bool</span>
 
 
+<span class="n">e403</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;lucky for you&#39;</span><span class="p">)</span>
+
+
 <span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/api/predict/&lt;string(length=2):source&gt;/&lt;string(length=2):target&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
-<span class="nd">@api.validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="n">Response</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">HTTPException</span><span class="p">(</span><span class="mi">403</span><span class="p">)])</span>
+<span class="nd">@api.validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="n">Response</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">e403</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
     <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;=&gt; from {source} to {target}&#39;</span><span class="p">)</span>  <span class="c1"># path</span>
     <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data: {request.json_data}&#39;</span><span class="p">)</span>  <span class="c1"># Data</span>
     <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Query: {request.query}&#39;</span><span class="p">)</span>  <span class="c1"># Query</span>
     <span class="k">if</span> <span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
-        <span class="n">abort_json</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+        <span class="n">e403</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="s1">&#39;bad luck&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">random</span><span class="p">()),</span> <span class="n">score</span><span class="o">=</span><span class="n">random</span><span class="p">())</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
     <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>

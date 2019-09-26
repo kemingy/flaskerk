@@ -44,11 +44,11 @@
 <span id="doc"></span><h1>Doc<a class="headerlink" href="#module-flaskerk.base" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="flaskerk.base.Flaskerk">
-<em class="property">class </em><code class="sig-prename descclassname">flaskerk.base.</code><code class="sig-name descname">Flaskerk</code><span class="sig-paren">(</span><em class="sig-param">app</em>, <em class="sig-param">**configs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">flaskerk.base.</code><code class="sig-name descname">Flaskerk</code><span class="sig-paren">(</span><em class="sig-param">app=None</em>, <em class="sig-param">**configs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>app</strong> – Flask app instance</p></li>
+<li><p><strong>app</strong> – Flask app instance, you can register it later</p></li>
 <li><p><strong>configs</strong> – key-value pairs in <a class="reference internal" href="#flaskerk.config.Config" title="flaskerk.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">flaskerk.config.Config</span></code></a></p></li>
 </ul>
 </dd>
@@ -69,14 +69,9 @@
 
 <dl class="method">
 <dt id="flaskerk.base.Flaskerk.register">
-<code class="sig-name descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk.register" title="Permalink to this definition">¶</a></dt>
-<dd><p>register doc blueprint to Flask app</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="flaskerk.base.Flaskerk.update_config">
-<code class="sig-name descname">update_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk.update_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk.update_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>update config from Flask app config with key ‘OPENAPI’</p>
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">app</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>register to Flask application
+:param app: <cite>flask.Flask</cite></p>
 </dd></dl>
 
 <dl class="method">

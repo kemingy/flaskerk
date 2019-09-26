@@ -40,7 +40,7 @@
   <h1>Source code for flaskerk.base</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="k">import</span> <span class="n">ValidationError</span><span class="p">,</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">Flask</span>
 
 <span class="kn">from</span> <span class="nn">flaskerk.config</span> <span class="k">import</span> <span class="n">default_config</span>
 <span class="kn">from</span> <span class="nn">flaskerk.view</span> <span class="k">import</span> <span class="n">APIview</span>
@@ -50,7 +50,7 @@
 
 <div class="viewcode-block" id="Flaskerk"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk">[docs]</a><span class="k">class</span> <span class="nc">Flaskerk</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :param app: Flask app instance</span>
+<span class="sd">    :param app: Flask app instance, you can register it later</span>
 <span class="sd">    :param configs: key-value pairs in :class:`flaskerk.config.Config`</span>
 
 <span class="sd">    example:</span>
@@ -64,7 +64,7 @@
 <span class="sd">       api = Flaskerk(app, version=&#39;0.2&#39;, title=&#39;Machine Translation service&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="o">**</span><span class="n">configs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">configs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">default_config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="kc">None</span>
@@ -72,23 +72,31 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">app</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">Flask</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_config</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_route</span><span class="p">()</span>
         <span class="n">app</span><span class="o">.</span><span class="n">openapi</span> <span class="o">=</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="Flaskerk.update_config"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Flaskerk.register"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        register to Flask application</span>
+<span class="sd">        :param app: `flask.Flask`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        update config from Flask app config with key &#39;OPENAPI&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">configs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OPENAPI&#39;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Flaskerk.register"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_register_route</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        register doc blueprint to Flask app</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -118,7 +126,7 @@
                 <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span><span class="p">)</span>
             <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Flaskerk.generate_spec"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.generate_spec">[docs]</a>    <span class="k">def</span> <span class="nf">generate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
