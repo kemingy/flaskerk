@@ -32,7 +32,7 @@ from random import random
 from flaskerk import Flaskerk, HTTPException
 
 app = Flask(__name__)
-api = Flaskerk(app)
+api = Flaskerk()
 
 class Query(BaseModel):
     text: str
@@ -63,6 +63,7 @@ def predict(source, target):
     return Response(label=int(10 * random()), score=random())
 
 if __name__ == '__main__':
+    api.register(app)
     app.run()
 ```
 
