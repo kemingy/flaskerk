@@ -1,6 +1,6 @@
 from functools import wraps
 from pydantic import ValidationError, BaseModel
-from flask import Blueprint, abort, request, jsonify, make_response
+from flask import Blueprint, abort, request, jsonify, make_response, Flask
 
 from flaskerk.config import default_config
 from flaskerk.view import APIview
@@ -10,7 +10,7 @@ from flaskerk.exception import HTTPException
 
 class Flaskerk:
     """
-    :param app: Flask app instance
+    :param app: Flask app instance, you can register it later
     :param configs: key-value pairs in :class:`flaskerk.config.Config`
 
     example:
@@ -24,7 +24,7 @@ class Flaskerk:
        api = Flaskerk(app, version='0.2', title='Machine Translation service')
     """
 
-    def __init__(self, app, **configs):
+    def __init__(self, app=None, **configs):
         self.models = {}
         self.config = default_config
         self.config._spec = None
@@ -32,15 +32,23 @@ class Flaskerk:
             setattr(self.config, key, value)
 
         if app:
-            self.init_app(app)
+            self._init_app(app)
 
-    def init_app(self, app):
+    def _init_app(self, app):
+        assert isinstance(app, Flask)
         self.app = app
-        self.update_config()
-        self.register()
+        self._update_config()
+        self._register_route()
         app.openapi = self
 
-    def update_config(self):
+    def register(self, app):
+        """
+        register to Flask application
+        :param app: `flask.Flask`
+        """
+        self._init_app(app)
+
+    def _update_config(self):
         """
         update config from Flask app config with key 'OPENAPI'
         """
@@ -48,7 +56,7 @@ class Flaskerk:
         for key, value in configs.items():
             setattr(self.config, key, value)
 
-    def register(self):
+    def _register_route(self):
         """
         register doc blueprint to Flask app
         """

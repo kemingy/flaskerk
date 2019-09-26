@@ -36,11 +36,11 @@ Quick Start
     from pydantic import BaseModel, Schema
     from random import random
 
-    from flaskerk import Flaskerk, HTTPException, abort_json
+    from flaskerk import Flaskerk, HTTPException
 
 
     app = Flask(__name__)
-    api = Flaskerk(app)
+    api = Flaskerk()
 
 
     class Query(BaseModel):
@@ -62,19 +62,24 @@ Quick Start
         vip: bool
 
 
+    e403 = HTTPException(code=403, msg='lucky for you')
+
+
     @app.route('/api/predict/<string(length=2):source>/<string(length=2):target>', methods=['POST'])
-    @api.validate(query=Query, data=Data, resp=Response, x=[HTTPException(403)])
+    @api.validate(query=Query, data=Data, resp=Response, x=[e403])
     def predict(source, target):
         print(f'=> from {source} to {target}')  # path
         print(f'Data: {request.json_data}')  # Data
         print(f'Query: {request.query}')  # Query
         if random() < 0.5:
-            abort_json(403)
+            e403.abort('bad luck')
         return Response(label=int(10 * random()), score=random())
 
 
     if __name__ == '__main__':
+        api.register(app)
         app.run()
+
 
 
 try it with ``http POST ':5000/api/predict/zh/en?text=hello' uid=0b01001001 limit=5 vip=true``
