@@ -10,7 +10,7 @@ class Query(BaseModel):
 
 
 bp = Blueprint('bp', __name__)
-api = Flaskerk()
+api = Flaskerk(ui='swagger')
 
 
 @bp.route('/api/recommend', methods=['POST'])
