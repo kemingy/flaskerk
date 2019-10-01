@@ -49,7 +49,7 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>app</strong> – Flask app instance, you can register it later</p></li>
-<li><p><strong>configs</strong> – key-value pairs in <a class="reference internal" href="#flaskerk.config.Config" title="flaskerk.config.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">flaskerk.config.Config</span></code></a></p></li>
+<li><p><strong>configs</strong> – key-value pairs in <code class="xref py py-class docutils literal notranslate"><span class="pre">flaskerk.config.Config</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -130,59 +130,7 @@ data will store in <code class="xref py py-class docutils literal notranslate"><
 <p>Based on <a class="reference external" href="https://werkzeug.palletsprojects.com/en/0.15.x/routing/#builtin-converters">Werkzeug</a> builtin converters.</p>
 </dd></dl>
 
-<span class="target" id="module-flaskerk.config"></span><dl class="class">
-<dt id="flaskerk.config.Config">
-<em class="property">class </em><code class="sig-prename descclassname">flaskerk.config.</code><code class="sig-name descname">Config</code><a class="reference internal" href="_modules/flaskerk/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.config.Config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Flaskerk configuration</p>
-<dl class="attribute">
-<dt id="flaskerk.config.Config.endpoint">
-<code class="sig-name descname">endpoint</code><em class="property"> = '/docs/'</em><a class="headerlink" href="#flaskerk.config.Config.endpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>url path for docs</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.filename">
-<code class="sig-name descname">filename</code><em class="property"> = 'openapi.json'</em><a class="headerlink" href="#flaskerk.config.Config.filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>openapi spec file name</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.openapi_veresion">
-<code class="sig-name descname">openapi_veresion</code><em class="property"> = '3.0.2'</em><a class="headerlink" href="#flaskerk.config.Config.openapi_veresion" title="Permalink to this definition">¶</a></dt>
-<dd><p>openapi spec version</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.title">
-<code class="sig-name descname">title</code><em class="property"> = 'Service Documents'</em><a class="headerlink" href="#flaskerk.config.Config.title" title="Permalink to this definition">¶</a></dt>
-<dd><p>document title</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.ui">
-<code class="sig-name descname">ui</code><em class="property"> = 'redoc'</em><a class="headerlink" href="#flaskerk.config.Config.ui" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#flaskerk.config.UI" title="flaskerk.config.UI"><code class="xref py py-class docutils literal notranslate"><span class="pre">UI</span></code></a></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.version">
-<code class="sig-name descname">version</code><em class="property"> = '0.1'</em><a class="headerlink" href="#flaskerk.config.Config.version" title="Permalink to this definition">¶</a></dt>
-<dd><p>service version</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="flaskerk.config.UI">
-<em class="property">class </em><code class="sig-prename descclassname">flaskerk.config.</code><code class="sig-name descname">UI</code><a class="reference internal" href="_modules/flaskerk/config.html#UI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.config.UI" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Param</dt>
-<dd class="field-odd"><p>‘redoc’ or ‘swagger’</p>
-</dd>
-</dl>
-</dd></dl>
-
-<span class="target" id="module-flaskerk.exception"></span><dl class="class">
+<span class="target" id="module-flaskerk.config"></span><span class="target" id="module-flaskerk.exception"></span><dl class="class">
 <dt id="flaskerk.exception.HTTPException">
 <em class="property">class </em><code class="sig-prename descclassname">flaskerk.exception.</code><code class="sig-name descname">HTTPException</code><span class="sig-paren">(</span><em class="sig-param">code: int = Schema(default: Ellipsis</em>, <em class="sig-param">description: 'HTTP response status code'</em>, <em class="sig-param">gt: 100</em>, <em class="sig-param">lt: 1000</em>, <em class="sig-param">extra: {})</em>, <em class="sig-param">msg: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/exception.html#HTTPException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.exception.HTTPException" title="Permalink to this definition">¶</a></dt>
 <dd><p>HTTP Exceptions.</p>
