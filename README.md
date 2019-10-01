@@ -16,7 +16,7 @@ If you're using Falcon, check my another library [Falibrary](https://github.com/
 - [x] support HTTP exceptions (default&customized)
 - [x] [OpenAPI spec](https://github.com/OAI/OpenAPI-Specification)
 - [x] [Redoc UI](https://github.com/Redocly/redoc)
-- [ ] [Swagger UI](https://github.com/swagger-api/swagger-ui)
+- [x] [Swagger UI](https://github.com/swagger-api/swagger-ui)
 - [x] support flask url path validation
 - [ ] support header validation
 - [ ] support cookie validation
