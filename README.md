@@ -72,3 +72,15 @@ try it with `http POST ':5000/api/predict/zh/en?text=hello' uid=0b01001001 limit
 Open the docs in http://127.0.0.1:5000/docs .
 
 For more examples, check [examples](/examples).
+
+## Contributing
+
+1. Fork the github repository
+2. Create a virtualenv
+   `python3 -m venv venv && source venv/bin/activate`
+3. Install pre-commit hooks
+   `pre-commit install --install-hooks`
+
+Running `git commit` will now lint the codebase before allowing a commit.
+
+Open a pull-request with the upstream branch and describe the new fix/feature.
