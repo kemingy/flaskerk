@@ -1,7 +1,7 @@
 import pytest
 
-from flaskerk.const import CONVERTER_TYPE_ANY, CONVERTER_TYPE_INT, CONVERTER_TYPE_FLOAT, CONVERTER_TYPE_UUID, \
-    CONVERTER_TYPE_PATH, CONVERTER_TYPE_STRING, CONVERTER_TYPE_DEFAULT
+from flaskerk.const import CONVERTER_TYPE_ANY, CONVERTER_TYPE_INT, CONVERTER_TYPE_FLOAT, \
+    CONVERTER_TYPE_UUID, CONVERTER_TYPE_PATH, CONVERTER_TYPE_STRING, CONVERTER_TYPE_DEFAULT
 from flaskerk.utils import parse_url
 
 TEST_PARAM_NAME = 'test_param'
@@ -13,9 +13,9 @@ PARSE_URL_PARAMETRIZE = [
         (EXPECTED_PATH,
          [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {
              'type': 'array',
-             'items': {'type': 'string', 'enum': (('test1', 'test2', 'test3', 'test4', 'test,test'))}}
-           }]
-         )
+             'items': {
+                 'type': 'string', 'enum': (('test1', 'test2', 'test3', 'test4', 'test,test'))}
+         }}])
     ),
     (
         f'/<{CONVERTER_TYPE_INT}:{TEST_PARAM_NAME}>',
@@ -41,18 +41,21 @@ PARSE_URL_PARAMETRIZE = [
     (
         f'/<{CONVERTER_TYPE_FLOAT}:{TEST_PARAM_NAME}>',
         (EXPECTED_PATH,
-         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {'type': 'number', 'format': 'float'}}]
-         )),
+         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {
+             'type': 'number', 'format': 'float'}}])
+    ),
     (
         f'/<{CONVERTER_TYPE_UUID}:{TEST_PARAM_NAME}>',
         (EXPECTED_PATH,
-         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {'type': 'string', 'format': 'uuid'}}]
-         )),
+         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {
+             'type': 'string', 'format': 'uuid'}}])
+    ),
     (
         f'/<{CONVERTER_TYPE_PATH}:{TEST_PARAM_NAME}>',
         (EXPECTED_PATH,
-         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {'type': 'string', 'format': 'path'}}]
-         )),
+         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {
+             'type': 'string', 'format': 'path'}}])
+    ),
     (
         f'/<{CONVERTER_TYPE_STRING}:{TEST_PARAM_NAME}>',
         (EXPECTED_PATH,
@@ -61,7 +64,8 @@ PARSE_URL_PARAMETRIZE = [
     (
         f'/<{CONVERTER_TYPE_STRING}(length=2):{TEST_PARAM_NAME}>',
         (EXPECTED_PATH,
-         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {'length': 2, 'type': 'string'}}])
+         [{'name': 'test_param', 'in': 'path', 'required': True, 'schema': {
+             'length': 2, 'type': 'string'}}])
     ),
     (
         f'/<{CONVERTER_TYPE_DEFAULT}:{TEST_PARAM_NAME}>',
