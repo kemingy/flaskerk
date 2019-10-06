@@ -31,6 +31,17 @@ def abort_json(code: int, msg: str = ''):
     abort(make_response(jsonify(message=msg), code))
 
 
+def get_converter(converter: str, *args, **kwargs):
+    """
+    Get conveter method from converter map
+    :param converter: str: converter type
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
+    return CONVERTER_MAPPING[converter](*args, **kwargs)
+
+
 def parse_url(path: str):
     """
     Parsing Flask route url to get the normal url path and parameter type.
@@ -47,12 +58,13 @@ def parse_url(path: str):
             subs.append(variable)
             continue
         subs.append(f'{{{variable}}}')
+
+        args, kwargs = [], {}
+
         if arguments:
             args, kwargs = parse_converter_args(arguments)
-        else:
-            args, kwargs = [], {}
-        get_schema_method = CONVERTER_MAPPING[converter]
-        schema = get_schema_method(args, kwargs)
+
+        schema = get_converter(converter, *args, **kwargs)
 
         parameters.append({
             'name': variable,

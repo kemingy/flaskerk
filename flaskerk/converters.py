@@ -1,4 +1,10 @@
 def get_converter_type_any(*args, **kwargs):
+    """
+    Handle converter type "any"
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
     schema = {
         'type': 'array',
         'items': {
@@ -10,6 +16,12 @@ def get_converter_type_any(*args, **kwargs):
 
 
 def get_converter_type_int(*args, **kwargs):
+    """
+    Handle converter type "int"
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
     schema = {
         'type': 'integer',
         'format': 'int32',
@@ -22,6 +34,12 @@ def get_converter_type_int(*args, **kwargs):
 
 
 def get_converter_type_float(*args, **kwargs):
+    """
+    Handle converter type "float"
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
     schema = {
         'type': 'number',
         'format': 'float',
@@ -30,6 +48,12 @@ def get_converter_type_float(*args, **kwargs):
 
 
 def get_converter_type_uuid(*args, **kwargs):
+    """
+    Handle converter type "uuid"
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
     schema = {
         'type': 'string',
         'format': 'uuid',
@@ -38,6 +62,12 @@ def get_converter_type_uuid(*args, **kwargs):
 
 
 def get_converter_type_path(*args, **kwargs):
+    """
+    Handle converter type "path"
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
     schema = {
         'type': 'string',
         'format': 'path',
@@ -46,6 +76,12 @@ def get_converter_type_path(*args, **kwargs):
 
 
 def get_converter_type_string(*args, **kwargs):
+    """
+    Handle converter type "string"
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
     schema = {
         'type': 'string',
     }
@@ -56,5 +92,11 @@ def get_converter_type_string(*args, **kwargs):
 
 
 def get_converter_type_default(*args, **kwargs):
+    """
+    Handle converter type "default"
+    :param args:
+    :param kwargs:
+    :return: return schema dict
+    """
     schema = {'type': 'string'}
     return schema
