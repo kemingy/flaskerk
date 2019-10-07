@@ -6,6 +6,7 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install -r requirements_docs.txt
+  - pip install pytest
   - pip install flake8
   - pip install .
 
