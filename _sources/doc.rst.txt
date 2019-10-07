@@ -12,3 +12,6 @@ Doc
 
 .. automodule:: flaskerk.exception
    :members:
+
+.. automodule:: flaskerk.converters
+   :members:
