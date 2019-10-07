@@ -17,7 +17,7 @@ Features
 - [x] support HTTP exceptions (default&customized)
 - [x] OpenAPI_ spec
 - [x] Redoc_ UI
-- [ ] Swagger_ UI
+- [x] Swagger_ UI
 - [x] support flask url path validation
 - [ ] support header validation
 - [ ] support cookie validation
@@ -90,6 +90,7 @@ try it with ``http POST ':5000/api/predict/zh/en?text=hello' uid=0b01001001 limi
    :caption: Contents:
 
    doc
+   utils
 
 
 
