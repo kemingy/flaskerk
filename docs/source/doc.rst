@@ -4,14 +4,8 @@ Doc
 .. automodule:: flaskerk.base
    :members:
 
-.. automodule:: flaskerk.utils
-   :members:
-
-.. automodule:: flaskerk.config
+.. autoclass:: flaskerk.config.Config
    :members:
 
 .. automodule:: flaskerk.exception
-   :members:
-
-.. automodule:: flaskerk.converters
    :members:
