@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Utils &#8212; flaskerk  documentation</title>
+    <link rel="stylesheet" href="_static/flask.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Doc" href="doc.html" />
+  <script>DOCUMENTATION_OPTIONS.URL_ROOT = './';</script>
+   
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="doc.html" title="Doc"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">flaskerk  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-flaskerk.utils">
+<span id="utils"></span><h1>Utils<a class="headerlink" href="#module-flaskerk.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="flaskerk.utils.abort_json">
+<code class="sig-prename descclassname">flaskerk.utils.</code><code class="sig-name descname">abort_json</code><span class="sig-paren">(</span><em class="sig-param">code: int</em>, <em class="sig-param">msg: str = ''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/utils.html#abort_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.utils.abort_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>abort as a JSON response</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> (<em>int</em>) – HTTP status code</p></li>
+<li><p><strong>msg</strong> (<em>str</em>) – description for this abort</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.utils.get_converter">
+<code class="sig-prename descclassname">flaskerk.utils.</code><code class="sig-name descname">get_converter</code><span class="sig-paren">(</span><em class="sig-param">converter: str</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/utils.html#get_converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.utils.get_converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get conveter method from converter map</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>converter</strong> – str: converter type</p></li>
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.utils.parse_url">
+<code class="sig-prename descclassname">flaskerk.utils.</code><code class="sig-name descname">parse_url</code><span class="sig-paren">(</span><em class="sig-param">path: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/utils.html#parse_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.utils.parse_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parsing Flask route url to get the normal url path and parameter type.</p>
+<p>Based on <a class="reference external" href="https://werkzeug.palletsprojects.com/en/0.15.x/routing/#builtin-converters">Werkzeug</a> builtin converters.</p>
+</dd></dl>
+
+<span class="target" id="module-flaskerk.converters"></span><dl class="function">
+<dt id="flaskerk.converters.get_converter_type_any">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_any</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_any"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_any" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle converter type “any”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.converters.get_converter_type_default">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_default</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle converter type “default”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.converters.get_converter_type_float">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_float</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle converter type “float”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.converters.get_converter_type_int">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_int</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle converter type “int”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.converters.get_converter_type_path">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_path</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle converter type “path”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.converters.get_converter_type_string">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_string</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle converter type “string”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="flaskerk.converters.get_converter_type_uuid">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_uuid</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle converter type “uuid”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – </p></li>
+<li><p><strong>kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return schema dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+  <span id="sidebar-top"></span>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  
+    
+  
+<h3>Navigation</h3>
+<ul>
+  <li><a href="index.html">Overview</a>
+    <ul>
+          <li>Previous: <a href="doc.html" title="previous chapter">Doc</a>
+          
+    </ul>
+  </li>
+</ul>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Keming.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  <script type="text/javascript" src="_static/version_warning_offset.js"></script>
+
+  </body>
+</html>
