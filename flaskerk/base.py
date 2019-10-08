@@ -100,7 +100,11 @@ class Flaskerk:
 
             func = self.app.view_functions[rule.endpoint]
             path, parameters = parse_url(str(rule))
-            routes[path] = {}
+
+            # multiple methods (with different func) may bond to the same path
+            if path not in routes:
+                routes[path] = {}
+
             for method in rule.methods:
                 if method in ['HEAD', 'OPTIONS']:
                     continue
