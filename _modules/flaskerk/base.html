@@ -140,7 +140,11 @@
 
             <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">endpoint</span><span class="p">]</span>
             <span class="n">path</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parse_url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
-            <span class="n">routes</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="c1"># multiple methods (with different func) may bond to the same path</span>
+            <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">routes</span><span class="p">:</span>
+                <span class="n">routes</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
             <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">rule</span><span class="o">.</span><span class="n">methods</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;HEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">]:</span>
                     <span class="k">continue</span>
