@@ -106,8 +106,8 @@ class Flaskerk:
             func = self.app.view_functions[rule.endpoint]
             path, parameters = parse_url(str(rule))
 
-            # bypass the function registered by others
-            if hasattr(func, '_registered_id') and func._registered_id != id(self):
+            # bypass the function  by others
+            if hasattr(func, '_decorator') and func._decorator != id(self):
                 continue
 
             # multiple methods (with different func) may bond to the same path
@@ -281,7 +281,7 @@ class Flaskerk:
                 validate_request.x = code_msg
 
             # register class ID for later verification
-            validate_request._registered_id = id(self)
+            validate_request._decorator = id(self)
 
             return validate_request
         return decorate_validate_request
