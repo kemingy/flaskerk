@@ -1,8 +1,6 @@
 from flask import render_template, jsonify, abort
 from flask.views import MethodView
 
-from flaskerk.config import default_config
-
 
 class APIview(MethodView):
     def __init__(self, *args, **kwargs):
@@ -11,7 +9,7 @@ class APIview(MethodView):
         super().__init__(*args, **kwargs)
 
     def get(self):
-        assert self.config.ui in default_config._support_ui
+        assert self.config.ui in self.config._support_ui
         ui_file = f'{self.config.ui}.html'
         return render_template(ui_file, spec_url=self.config.filename)
 
