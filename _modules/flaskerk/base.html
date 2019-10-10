@@ -146,6 +146,10 @@
             <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">endpoint</span><span class="p">]</span>
             <span class="n">path</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parse_url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
 
+            <span class="c1"># bypass the function  by others</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;_decorator&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">func</span><span class="o">.</span><span class="n">_decorator</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">continue</span>
+
             <span class="c1"># multiple methods (with different func) may bond to the same path</span>
             <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">routes</span><span class="p">:</span>
                 <span class="n">routes</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -315,6 +319,9 @@
 
             <span class="k">if</span> <span class="n">code_msg</span><span class="p">:</span>
                 <span class="n">validate_request</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">code_msg</span>
+
+            <span class="c1"># register class ID for later verification</span>
+            <span class="n">validate_request</span><span class="o">.</span><span class="n">_decorator</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">validate_request</span>
         <span class="k">return</span> <span class="n">decorate_validate_request</span></div></div>
