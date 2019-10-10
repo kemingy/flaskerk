@@ -25,6 +25,48 @@ If you're using Falcon, check my another library [Falibrary](https://github.com/
 
 install with `pip install flaskerk` (Python 3.6+)
 
+### Simple demo
+
+```py
+from flask import Flask, request, jsonify
+from flaskerk import Flaskerk
+from pydantic import BaseModel
+
+class Query(BaseModel):
+    text: str
+
+app = Flask(__name__)
+api = Flaskerk()
+
+@app.route('/api/classify')
+@api.validate(query=Query)
+def classify():
+    print(request.query)
+    return jsonify(label=0)
+
+if __name__ == "__main__":
+    api.register(app)
+    app.run()
+```
+
+Changes you need to make:
+
+* create model with [`pydantic`](https://github.com/samuelcolvin/pydantic/)
+* decorate the route function with `Flaskerk.validate()`
+* specify which part you need in `validate`
+  * `query` (args in url)
+  * `data` (JSON data)
+  * `resp` (response)
+  * `x` (HTTP Exceptions)
+* register to Flask application
+
+After that, this library will help you validate the incoming request and provide API document in `/docs`.
+
+For more details, check the [document](https://kemingy.github.io/flaskerk).
+
+
+### More feature
+
 ```py
 from flask import Flask, request
 from pydantic import BaseModel, Schema
@@ -72,3 +114,11 @@ try it with `http POST ':5000/api/predict/zh/en?text=hello' uid=0b01001001 limit
 Open the docs in http://127.0.0.1:5000/docs .
 
 For more examples, check [examples](/examples).
+
+## FAQ
+
+> Can I just do the validation without generating API document?
+
+Sure. If you don't register it to Flask application, there won't be document routes.
+
+> 
