@@ -30,6 +30,51 @@ Features
 Quick Start
 -----------
 
+install with :code:`pip install flaskerk` (Python 3.6+)
+
+Simple demo
+++++++++++++++
+
+.. code:: py
+
+    from flask import Flask, request, jsonify
+    from flaskerk import Flaskerk
+    from pydantic import BaseModel
+
+    class Query(BaseModel):
+        text: str
+
+    app = Flask(__name__)
+    api = Flaskerk()
+
+    @app.route('/api/classify')
+    @api.validate(query=Query)
+    def classify():
+        print(request.query)
+        return jsonify(label=0)
+
+    if __name__ == "__main__":
+        api.register(app)
+        app.run()
+
+
+Changes you need to make:
+
+* create model with ``pydantic``
+* decorate the route function with :class:`flaskerk.Flaskerk.validate`
+* specify which part you need in ``validate``
+    - ``query`` (args in url)
+    - ``data`` (JSON data)
+    - ``resp`` (response)
+    - ``x`` (HTTP Exceptions)
+* register to Flask application
+
+After that, this library will help you validate the incoming request and provide API document in ``/docs``.
+
+
+More feature
++++++++++++++++
+
 .. code:: py
 
     from flask import Flask, request

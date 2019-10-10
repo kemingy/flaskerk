@@ -43,8 +43,13 @@ class Flaskerk:
 
     def register(self, app):
         """
-        register to Flask application
         :param app: `flask.Flask`
+
+        Register to Flask application.
+
+        This function will update some config, and add some routes to Flask
+        application. If you have already pass the Flask application when
+        Flaskerk is initialized, then it will register automatically.
         """
         self._init_app(app)
 
@@ -197,13 +202,13 @@ class Flaskerk:
 
     def validate(self, query=None, data=None, resp=None, x=[]):
         """
-        validate JSON data according to Model schema
-
         :param query: ``pydantic.BaseModel`` schema for request. The parsed
                       data will store in :class:`flask.request.query`.
         :param resp: ``pydantic.BaseModel`` schema for response
         :param data: ``pydantic.BaseModel`` schema for JSON data
         :param x: List of :class:`flaskerk.exception.HTTPException`
+
+        validate JSON data according to Model schema
 
         .. code-block:: python
 
