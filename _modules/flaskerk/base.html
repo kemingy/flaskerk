@@ -83,8 +83,13 @@
 
 <div class="viewcode-block" id="Flaskerk.register"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        register to Flask application</span>
 <span class="sd">        :param app: `flask.Flask`</span>
+
+<span class="sd">        Register to Flask application.</span>
+
+<span class="sd">        This function will update some config, and add some routes to Flask</span>
+<span class="sd">        application. If you have already pass the Flask application when</span>
+<span class="sd">        Flaskerk is initialized, then it will register automatically.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
 
@@ -237,13 +242,13 @@
 
 <div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        validate JSON data according to Model schema</span>
-
 <span class="sd">        :param query: ``pydantic.BaseModel`` schema for request. The parsed</span>
 <span class="sd">                      data will store in :class:`flask.request.query`.</span>
 <span class="sd">        :param resp: ``pydantic.BaseModel`` schema for response</span>
 <span class="sd">        :param data: ``pydantic.BaseModel`` schema for JSON data</span>
 <span class="sd">        :param x: List of :class:`flaskerk.exception.HTTPException`</span>
+
+<span class="sd">        validate JSON data according to Model schema</span>
 
 <span class="sd">        .. code-block:: python</span>
 

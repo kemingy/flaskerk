@@ -59,6 +59,50 @@
 </div>
 <div class="section" id="quick-start">
 <h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<p>install with <code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">flaskerk</span></code> (Python 3.6+)</p>
+<div class="section" id="simple-demo">
+<h3>Simple demo<a class="headerlink" href="#simple-demo" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">from</span> <span class="nn">flaskerk</span> <span class="kn">import</span> <span class="n">Flaskerk</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">Flaskerk</span><span class="p">()</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/api/classify&#39;</span><span class="p">)</span>
+<span class="nd">@api.validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">classify</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Changes you need to make:</p>
+<ul class="simple">
+<li><p>create model with <code class="docutils literal notranslate"><span class="pre">pydantic</span></code></p></li>
+<li><p>decorate the route function with <code class="xref py py-class docutils literal notranslate"><span class="pre">flaskerk.Flaskerk.validate</span></code></p></li>
+<li><dl class="simple">
+<dt>specify which part you need in <code class="docutils literal notranslate"><span class="pre">validate</span></code></dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">query</span></code> (args in url)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> (JSON data)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">resp</span></code> (response)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code> (HTTP Exceptions)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>register to Flask application</p></li>
+</ul>
+<p>After that, this library will help you validate the incoming request and provide API document in <code class="docutils literal notranslate"><span class="pre">/docs</span></code>.</p>
+</div>
+<div class="section" id="more-feature">
+<h3>More feature<a class="headerlink" href="#more-feature" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span>
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">random</span>
@@ -118,6 +162,7 @@
 </div>
 </div>
 </div>
+</div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
@@ -142,7 +187,11 @@
   <ul>
 <li><a class="reference internal" href="#">Welcome to flaskerk’s documentation!</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
+<li><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li><a class="reference internal" href="#simple-demo">Simple demo</a></li>
+<li><a class="reference internal" href="#more-feature">More feature</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
