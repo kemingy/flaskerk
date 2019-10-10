@@ -22,6 +22,3 @@ class Config:
 
         #: private
         self._support_ui = {'redoc', 'swagger'}
-
-
-default_config = Config()

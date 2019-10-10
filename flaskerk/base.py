@@ -2,7 +2,7 @@ from functools import wraps
 from pydantic import ValidationError, BaseModel
 from flask import Blueprint, abort, request, jsonify, make_response, Flask
 
-from flaskerk.config import default_config
+from flaskerk.config import Config
 from flaskerk.view import APIview
 from flaskerk.utils import abort_json, parse_url
 from flaskerk.exception import HTTPException
@@ -26,7 +26,7 @@ class Flaskerk:
 
     def __init__(self, app=None, **configs):
         self.models = {}
-        self.config = default_config
+        self.config = Config()
         self.config._spec = None
         for key, value in configs.items():
             setattr(self.config, key, value)
