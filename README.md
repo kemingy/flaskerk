@@ -73,7 +73,7 @@ from flaskerk import Flaskerk, HTTPException
 app = Flask(__name__)
 api = Flaskerk(
     title='Demo Service',
-    version='latest',
+    version='1.0',
     ui='swagger',
 )
 

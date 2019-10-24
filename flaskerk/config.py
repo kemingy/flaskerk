@@ -16,7 +16,7 @@ class Config:
         #: document title
         self.title = 'Service Documents'
         #: service version
-        self.version = '0.1'
+        self.version = 'latest'
         #: 'redoc' or 'swagger'
         self.ui = 'redoc'
 
