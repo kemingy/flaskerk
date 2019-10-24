@@ -12,14 +12,10 @@ If you're using Falcon, check my another library [Falibrary](https://github.com/
 
 ## Features
 
-- [x] JSON data(request&response) validation with [pydantic](https://github.com/samuelcolvin/pydantic/)
-- [x] support HTTP exceptions (default&customized)
-- [x] [OpenAPI spec](https://github.com/OAI/OpenAPI-Specification)
-- [x] [Redoc UI](https://github.com/Redocly/redoc)
-- [x] [Swagger UI](https://github.com/swagger-api/swagger-ui)
-- [x] support flask url path validation
-- [ ] support header validation
-- [ ] support cookie validation
+* Generate API document with [Redoc UI](https://github.com/Redocly/redoc) or [Swagger UI](https://github.com/swagger-api/swagger-ui) :yum:
+* Less boilerplate code, annotations are really easy-to-use :sparkles:
+* Validate query, JSON data, response data with [pydantic](https://github.com/samuelcolvin/pydantic/) :wink:
+* Better HTTP exceptions for API services (default & customized) (JSON instead of HTML) :grimacing:
 
 ## Quick Start
 
@@ -51,13 +47,14 @@ if __name__ == "__main__":
 
 Changes you need to make:
 
-* create model with [`pydantic`](https://github.com/samuelcolvin/pydantic/)
+* create model with [pydantic](https://github.com/samuelcolvin/pydantic/)
 * decorate the route function with `Flaskerk.validate()`
 * specify which part you need in `validate`
   * `query` (args in url)
-  * `data` (JSON data)
-  * `resp` (response)
-  * `x` (HTTP Exceptions)
+    * [builtin converters](https://werkzeug.palletsprojects.com/en/0.15.x/routing/#builtin-converters) (string, path, any, int, float, uuid)
+  * `data` (JSON data from request)
+  * `resp` (response) this will be transformed to JSON data after validation
+  * `x` (HTTP Exceptions list)
 * register to Flask application
 
 After that, this library will help you validate the incoming request and provide API document in `/docs`.
@@ -74,7 +71,11 @@ from random import random
 from flaskerk import Flaskerk, HTTPException
 
 app = Flask(__name__)
-api = Flaskerk()
+api = Flaskerk(
+    title='Demo Service',
+    version='1.0',
+    ui='swagger',
+)
 
 class Query(BaseModel):
     text: str
@@ -92,7 +93,7 @@ class Data(BaseModel):
     limit: int
     vip: bool
 
-e403 = HTTPException(code=403, msg='lucky for you')
+e233 = HTTPException(code=233, msg='lucky for you')
 
 @app.route('/api/predict/<string(length=2):source>/<string(length=2):target>', methods=['POST'])
 @api.validate(query=Query, data=Data, resp=Response, x=[e403])
@@ -101,7 +102,7 @@ def predict(source, target):
     print(f'Data: {request.json_data}')  # Data
     print(f'Query: {request.query}')  # Query
     if random() < 0.5:
-        e403.abort()
+        e233.abort()
     return Response(label=int(10 * random()), score=random())
 
 if __name__ == '__main__':
@@ -120,5 +121,3 @@ For more examples, check [examples](/examples).
 > Can I just do the validation without generating API document?
 
 Sure. If you don't register it to Flask application, there won't be document routes.
-
-> 
