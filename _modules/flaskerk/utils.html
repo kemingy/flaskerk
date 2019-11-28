@@ -38,13 +38,13 @@
           <div class="body" role="main">
             
   <h1>Source code for flaskerk.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">abort</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">jsonify</span>
-<span class="kn">from</span> <span class="nn">werkzeug.routing</span> <span class="k">import</span> <span class="n">parse_rule</span><span class="p">,</span> <span class="n">parse_converter_args</span>
-<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">default_exceptions</span>
+<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">abort</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">from</span> <span class="nn">werkzeug.routing</span> <span class="kn">import</span> <span class="n">parse_rule</span><span class="p">,</span> <span class="n">parse_converter_args</span>
+<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">default_exceptions</span>
 
-<span class="kn">from</span> <span class="nn">flaskerk.const</span> <span class="k">import</span> <span class="n">CONVERTER_TYPE_ANY</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_INT</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_FLOAT</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">flaskerk.const</span> <span class="kn">import</span> <span class="n">CONVERTER_TYPE_ANY</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_INT</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_FLOAT</span><span class="p">,</span> \
     <span class="n">CONVERTER_TYPE_UUID</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_PATH</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_STRING</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_DEFAULT</span>
-<span class="kn">from</span> <span class="nn">flaskerk.converters</span> <span class="k">import</span> <span class="n">get_converter_type_any</span><span class="p">,</span> <span class="n">get_converter_type_int</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">flaskerk.converters</span> <span class="kn">import</span> <span class="n">get_converter_type_any</span><span class="p">,</span> <span class="n">get_converter_type_int</span><span class="p">,</span> \
     <span class="n">get_converter_type_float</span><span class="p">,</span> <span class="n">get_converter_type_uuid</span><span class="p">,</span> <span class="n">get_converter_type_path</span><span class="p">,</span> \
     <span class="n">get_converter_type_string</span><span class="p">,</span> <span class="n">get_converter_type_default</span>
 
@@ -99,7 +99,7 @@
         <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
             <span class="k">continue</span>
-        <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{{</span><span class="si">{variable}</span><span class="s1">}}&#39;</span><span class="p">)</span>
+        <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;{{</span><span class="si">{variable}</span><span class="s1">}}&#39;</span><span class="p">)</span>
 
         <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">{}</span>
 
@@ -156,7 +156,7 @@
   
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Keming.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
     </div>
   <script type="text/javascript" src="../../_static/version_warning_offset.js"></script>
 

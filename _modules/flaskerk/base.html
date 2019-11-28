@@ -38,14 +38,14 @@
           <div class="body" role="main">
             
   <h1>Source code for flaskerk.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="k">import</span> <span class="n">ValidationError</span><span class="p">,</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">Flask</span>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">ValidationError</span><span class="p">,</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">Flask</span>
 
-<span class="kn">from</span> <span class="nn">flaskerk.config</span> <span class="k">import</span> <span class="n">Config</span>
-<span class="kn">from</span> <span class="nn">flaskerk.view</span> <span class="k">import</span> <span class="n">APIview</span>
-<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="k">import</span> <span class="n">abort_json</span><span class="p">,</span> <span class="n">parse_url</span>
-<span class="kn">from</span> <span class="nn">flaskerk.exception</span> <span class="k">import</span> <span class="n">HTTPException</span>
+<span class="kn">from</span> <span class="nn">flaskerk.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">flaskerk.view</span> <span class="kn">import</span> <span class="n">APIview</span>
+<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="kn">import</span> <span class="n">abort_json</span><span class="p">,</span> <span class="n">parse_url</span>
+<span class="kn">from</span> <span class="nn">flaskerk.exception</span> <span class="kn">import</span> <span class="n">HTTPException</span>
 
 
 <div class="viewcode-block" id="Flaskerk"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk">[docs]</a><span class="k">class</span> <span class="nc">Flaskerk</span><span class="p">:</span>
@@ -64,7 +64,7 @@
 <span class="sd">       api = Flaskerk(app, version=&#39;0.2&#39;, title=&#39;Machine Translation service&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">configs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">configs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="kc">None</span>
@@ -77,7 +77,7 @@
     <span class="k">def</span> <span class="nf">_init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">Flask</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_config</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OPENAPI&#39;</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_route</span><span class="p">()</span>
         <span class="n">app</span><span class="o">.</span><span class="n">openapi</span> <span class="o">=</span> <span class="bp">self</span>
 
@@ -93,13 +93,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Flaskerk.update_config"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.update_config">[docs]</a>    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        update config from Flask app config with key &#39;OPENAPI&#39;</span>
+<span class="sd">        Manually update config.</span>
+
+<span class="sd">        This function will be triggered when you register this library to Flask</span>
+<span class="sd">        instance, and configs in Flask.config[&#39;OPENAPI&#39;] will be used to update.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">configs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OPENAPI&#39;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">configs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_register_route</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -123,17 +125,37 @@
         <span class="p">)</span>
 
         <span class="c1"># docs/openapi.json</span>
-        <span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.config.endpoint}</span><span class="s1">&lt;filename&gt;&#39;</span><span class="p">)</span>
+        <span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{self.config.endpoint}</span><span class="s1">&lt;filename&gt;&#39;</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">jsonfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">generate_spec</span><span class="p">()</span>
-                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
             <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Flaskerk.generate_spec"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.generate_spec">[docs]</a>    <span class="k">def</span> <span class="nf">generate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bypass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;greedy&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;strict&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;_decorator&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decorator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;_decorator&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">decorator</span> <span class="ow">and</span> <span class="n">decorator</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get OpenAPI spec for this Flask app.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_spec</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span>
+
+    <span class="k">def</span> <span class="nf">_generate_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        generate OpenAPI spec JSON file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -146,8 +168,8 @@
             <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">view_functions</span><span class="p">[</span><span class="n">rule</span><span class="o">.</span><span class="n">endpoint</span><span class="p">]</span>
             <span class="n">path</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parse_url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">))</span>
 
-            <span class="c1"># bypass the function  by others</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;_decorator&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">func</span><span class="o">.</span><span class="n">_decorator</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="c1"># bypass the function decorated by others</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bypass</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
                 <span class="k">continue</span>
 
             <span class="c1"># multiple methods (with different func) may bond to the same path</span>
@@ -168,7 +190,7 @@
                         <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
                             <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
                                 <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
-                                    <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.data}</span><span class="s1">&#39;</span>
+                                    <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.data}</span><span class="s1">&#39;</span>
                                 <span class="p">}</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
@@ -180,42 +202,40 @@
                         <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                         <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.query}</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.query}</span><span class="s1">&#39;</span><span class="p">,</span>
                         <span class="p">}</span>
                     <span class="p">})</span>
                 <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
 
+                <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">has_2xx</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">):</span>
+                            <span class="n">has_2xx</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">][</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
+                        <span class="p">}</span>
+
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;resp&#39;</span><span class="p">):</span>
-                    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="s1">&#39;200&#39;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Successful Response&#39;</span><span class="p">,</span>
-                            <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
-                                <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
-                                    <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
-                                        <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.resp}</span><span class="s1">&#39;</span>
-                                    <span class="p">}</span>
+                    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">][</span><span class="s1">&#39;200&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Successful Response&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.resp}</span><span class="s1">&#39;</span>
                                 <span class="p">}</span>
                             <span class="p">}</span>
                         <span class="p">},</span>
                     <span class="p">}</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="s1">&#39;200&#39;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Successful Response&#39;</span><span class="p">,</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="n">has_2xx</span><span class="p">:</span>
+                    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">][</span><span class="s1">&#39;200&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Successful Response&#39;</span><span class="p">}</span>
 
                 <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">schema</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;resp&#39;</span><span class="p">)]):</span>
                     <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">][</span><span class="s1">&#39;422&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                         <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Validation Error&#39;</span><span class="p">,</span>
                     <span class="p">}</span>
-
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">code</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span>
-                            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
-                        <span class="p">}</span>
 
                 <span class="n">routes</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">spec</span>
 
@@ -242,7 +262,7 @@
             <span class="p">},</span>
             <span class="s1">&#39;definitions&#39;</span><span class="p">:</span> <span class="n">definitions</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">data</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -296,11 +316,17 @@
 
                 <span class="n">request</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">json_query</span>
                 <span class="n">request</span><span class="o">.</span><span class="n">json_data</span> <span class="o">=</span> <span class="n">json_data</span>
+
                 <span class="n">response</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">others</span> <span class="o">=</span> <span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">response</span><span class="p">,</span> <span class="n">others</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
                 <span class="k">if</span> <span class="n">resp</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
                     <span class="n">abort_json</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Wrong response type produced by server.&#39;</span><span class="p">)</span>
 
-                <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span> <span class="k">if</span> <span class="n">resp</span> <span class="k">else</span> <span class="n">response</span>
+                <span class="k">if</span> <span class="n">resp</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">dict</span><span class="p">()),</span> <span class="o">*</span><span class="n">others</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">make_response</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">)</span>
 
             <span class="c1"># register schemas to this function</span>
             <span class="k">for</span> <span class="n">schema</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
@@ -315,13 +341,13 @@
             <span class="n">code_msg</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">)</span>
-                <span class="n">code_msg</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">msg</span>
+                <span class="n">code_msg</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">)]</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">msg</span>
 
             <span class="k">if</span> <span class="n">code_msg</span><span class="p">:</span>
                 <span class="n">validate_request</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">code_msg</span>
 
-            <span class="c1"># register class ID for later verification</span>
-            <span class="n">validate_request</span><span class="o">.</span><span class="n">_decorator</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="c1"># register this decorator</span>
+            <span class="n">validate_request</span><span class="o">.</span><span class="n">_decorator</span> <span class="o">=</span> <span class="bp">self</span>
 
             <span class="k">return</span> <span class="n">validate_request</span>
         <span class="k">return</span> <span class="n">decorate_validate_request</span></div></div>
@@ -365,7 +391,7 @@
   
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Keming.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
     </div>
   <script type="text/javascript" src="../../_static/version_warning_offset.js"></script>
 

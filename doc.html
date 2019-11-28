@@ -66,12 +66,6 @@
 </pre></div>
 </div>
 <dl class="method">
-<dt id="flaskerk.base.Flaskerk.generate_spec">
-<code class="sig-name descname">generate_spec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk.generate_spec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk.generate_spec" title="Permalink to this definition">¶</a></dt>
-<dd><p>generate OpenAPI spec JSON file</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="flaskerk.base.Flaskerk.register">
 <code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">app</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk.register" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -83,6 +77,20 @@
 <p>This function will update some config, and add some routes to Flask
 application. If you have already pass the Flask application when
 Flaskerk is initialized, then it will register automatically.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="flaskerk.base.Flaskerk.spec">
+<em class="property">property </em><code class="sig-name descname">spec</code><a class="headerlink" href="#flaskerk.base.Flaskerk.spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get OpenAPI spec for this Flask app.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="flaskerk.base.Flaskerk.update_config">
+<code class="sig-name descname">update_config</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/base.html#Flaskerk.update_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.base.Flaskerk.update_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually update config.</p>
+<p>This function will be triggered when you register this library to Flask
+instance, and configs in Flask.config[‘OPENAPI’] will be used to update.</p>
 </dd></dl>
 
 <dl class="method">
@@ -107,12 +115,12 @@ data will store in <code class="xref py py-class docutils literal notranslate"><
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span>
 
-<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/api/predict&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
-<span class="nd">@api.validate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">Query</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/predict&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">Query</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">predict</span><span class="p">():</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json_data</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">is_spam</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">is_spam</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For more examples, check <a class="reference external" href="https://github.com/kemingy/flaskerk/tree/master/examples">examples</a>.</p>
@@ -123,47 +131,27 @@ data will store in <code class="xref py py-class docutils literal notranslate"><
 <dl class="class">
 <dt id="flaskerk.config.Config">
 <em class="property">class </em><code class="sig-prename descclassname">flaskerk.config.</code><code class="sig-name descname">Config</code><a class="reference internal" href="_modules/flaskerk/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.config.Config" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="flaskerk.config.Config.endpoint">
-<code class="sig-name descname">endpoint</code><em class="property"> = None</em><a class="headerlink" href="#flaskerk.config.Config.endpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>url path for docs</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.filename">
-<code class="sig-name descname">filename</code><em class="property"> = None</em><a class="headerlink" href="#flaskerk.config.Config.filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>openapi spec file name</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.openapi_veresion">
-<code class="sig-name descname">openapi_veresion</code><em class="property"> = None</em><a class="headerlink" href="#flaskerk.config.Config.openapi_veresion" title="Permalink to this definition">¶</a></dt>
-<dd><p>openapi spec version</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.title">
-<code class="sig-name descname">title</code><em class="property"> = None</em><a class="headerlink" href="#flaskerk.config.Config.title" title="Permalink to this definition">¶</a></dt>
-<dd><p>document title</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.ui">
-<code class="sig-name descname">ui</code><em class="property"> = None</em><a class="headerlink" href="#flaskerk.config.Config.ui" title="Permalink to this definition">¶</a></dt>
-<dd><p>‘redoc’ or ‘swagger’</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="flaskerk.config.Config.version">
-<code class="sig-name descname">version</code><em class="property"> = None</em><a class="headerlink" href="#flaskerk.config.Config.version" title="Permalink to this definition">¶</a></dt>
-<dd><p>service version</p>
-</dd></dl>
-
+<dd><dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>endpoint</strong> – url path for docs</p></li>
+<li><p><strong>filename</strong> – openapi spec file name</p></li>
+<li><p><strong>openapi_version</strong> – openapi spec version</p></li>
+<li><p><strong>title</strong> – document title</p></li>
+<li><p><strong>version</strong> – service version</p></li>
+<li><p><strong>ui</strong> – ui theme, choose ‘redoc’ or ‘swagger’</p></li>
+<li><p><strong>mode</strong> – mode for route. <strong>normal</strong> includes undecorated routes and
+routes decorated by this instance. <strong>strict</strong> only includes routes
+decorated by this instance. <strong>greedy</strong> includes all the routes.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Flaskerk configuration.</p>
 </dd></dl>
 
 <span class="target" id="module-flaskerk.exception"></span><dl class="class">
 <dt id="flaskerk.exception.HTTPException">
-<em class="property">class </em><code class="sig-prename descclassname">flaskerk.exception.</code><code class="sig-name descname">HTTPException</code><span class="sig-paren">(</span><em class="sig-param">code: int = FieldInfo(default=Ellipsis</em>, <em class="sig-param">description='HTTP response status code'</em>, <em class="sig-param">gt=100</em>, <em class="sig-param">lt=1000</em>, <em class="sig-param">extra={})</em>, <em class="sig-param">msg: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/exception.html#HTTPException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.exception.HTTPException" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">flaskerk.exception.</code><code class="sig-name descname">HTTPException</code><a class="reference internal" href="_modules/flaskerk/exception.html#HTTPException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.exception.HTTPException" title="Permalink to this definition">¶</a></dt>
 <dd><p>HTTP Exceptions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -234,7 +222,7 @@ data will store in <code class="xref py py-class docutils literal notranslate"><
   
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Keming.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
     </div>
   <script type="text/javascript" src="_static/version_warning_offset.js"></script>
 

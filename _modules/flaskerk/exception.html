@@ -38,13 +38,12 @@
           <div class="body" role="main">
             
   <h1>Source code for flaskerk.exception</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="k">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">validator</span>
-<span class="kn">from</span> <span class="nn">pydantic.dataclasses</span> <span class="k">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">_aborter</span><span class="p">,</span> <span class="n">default_exceptions</span>
-<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="k">import</span> <span class="n">HTTPException</span> <span class="k">as</span> <span class="n">WerkzeugException</span>
-<span class="kn">from</span> <span class="nn">werkzeug.http</span> <span class="k">import</span> <span class="n">HTTP_STATUS_CODES</span>
+<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">validator</span>
+<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">_aborter</span><span class="p">,</span> <span class="n">default_exceptions</span>
+<span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">HTTPException</span> <span class="k">as</span> <span class="n">WerkzeugException</span>
+<span class="kn">from</span> <span class="nn">werkzeug.http</span> <span class="kn">import</span> <span class="n">HTTP_STATUS_CODES</span>
 
-<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="k">import</span> <span class="n">abort_json</span>
+<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="kn">import</span> <span class="n">abort_json</span>
 
 
 <span class="k">class</span> <span class="nc">HTTPValidationError</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -55,8 +54,7 @@
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Unprocessable Entity&#39;</span>
 
 
-<div class="viewcode-block" id="HTTPException"><a class="viewcode-back" href="../../doc.html#flaskerk.exception.HTTPException">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">HTTPException</span><span class="p">:</span>
+<div class="viewcode-block" id="HTTPException"><a class="viewcode-back" href="../../doc.html#flaskerk.exception.HTTPException">[docs]</a><span class="k">class</span> <span class="nc">HTTPException</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    HTTP Exceptions.</span>
 
@@ -103,7 +101,7 @@
     <span class="k">def</span> <span class="nf">__post_init_post_parse__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_aborter</span><span class="o">.</span><span class="n">mapping</span><span class="p">:</span>
             <span class="n">_aborter</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
-                <span class="n">f</span><span class="s1">&#39;NewHTTPException_</span><span class="si">{self.code}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;NewHTTPException_</span><span class="si">{self.code}</span><span class="s1">&#39;</span><span class="p">,</span>
                 <span class="p">(</span><span class="n">WerkzeugException</span><span class="p">,</span> <span class="p">),</span>
                 <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">}</span>
             <span class="p">)</span>
@@ -154,7 +152,7 @@
   
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Keming.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
     </div>
   <script type="text/javascript" src="../../_static/version_warning_offset.js"></script>
 

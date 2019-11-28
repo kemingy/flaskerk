@@ -39,29 +39,35 @@
             
   <h1>Source code for flaskerk.config</h1><div class="highlight"><pre>
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../doc.html#flaskerk.config.Config">[docs]</a><span></span><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Flaskerk configuration</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :ivar endpoint: url path for docs</span>
+<span class="sd">    :ivar filename: openapi spec file name</span>
+<span class="sd">    :ivar openapi_version: openapi spec version</span>
+<span class="sd">    :ivar title: document title</span>
+<span class="sd">    :ivar version: service version</span>
+<span class="sd">    :ivar ui: ui theme, choose &#39;redoc&#39; or &#39;swagger&#39;</span>
+<span class="sd">    :ivar mode: mode for route. **normal** includes undecorated routes and</span>
+<span class="sd">        routes decorated by this instance. **strict** only includes routes</span>
+<span class="sd">        decorated by this instance. **greedy** includes all the routes.</span>
+
+<span class="sd">    Flaskerk configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;docs&#39;</span>
-        <span class="c1">#: url path for docs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="s1">&#39;/docs/&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url_prefix</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">template_folder</span> <span class="o">=</span> <span class="s1">&#39;templates&#39;</span>
-        <span class="c1">#: openapi spec file name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;openapi.json&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;normal&#39;</span>
 
-        <span class="c1">#: openapi spec version</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">openapi_veresion</span> <span class="o">=</span> <span class="s1">&#39;3.0.2&#39;</span>
-        <span class="c1">#: document title</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Service Documents&#39;</span>
-        <span class="c1">#: service version</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;latest&#39;</span>
-        <span class="c1">#: &#39;redoc&#39; or &#39;swagger&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="s1">&#39;redoc&#39;</span>
 
-        <span class="c1">#: private</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_support_ui</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;redoc&#39;</span><span class="p">,</span> <span class="s1">&#39;swagger&#39;</span><span class="p">}</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_support_ui</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;redoc&#39;</span><span class="p">,</span> <span class="s1">&#39;swagger&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_support_mode</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;greedy&#39;</span><span class="p">,</span> <span class="s1">&#39;strict&#39;</span><span class="p">}</span></div>
 </pre></div>
 
           </div>
@@ -102,7 +108,7 @@
   
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Keming.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
     </div>
   <script type="text/javascript" src="../../_static/version_warning_offset.js"></script>
 
