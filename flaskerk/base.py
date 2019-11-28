@@ -37,7 +37,7 @@ class Flaskerk:
     def _init_app(self, app):
         assert isinstance(app, Flask)
         self.app = app
-        self._update_config()
+        self.update_config(**self.app.config.get('OPENAPI', {}))
         self._register_route()
         app.openapi = self
 
@@ -53,12 +53,14 @@ class Flaskerk:
         """
         self._init_app(app)
 
-    def _update_config(self):
+    def update_config(self, **kwargs):
         """
-        update config from Flask app config with key 'OPENAPI'
+        Manually update config.
+
+        This function will be triggered when you register this library to Flask
+        instance, and configs in Flask.config['OPENAPI'] will be used to update.
         """
-        configs = self.app.config.get('OPENAPI', {})
-        for key, value in configs.items():
+        for key, value in kwargs.items():
             setattr(self.config, key, value)
 
     def _register_route(self):
@@ -86,14 +88,34 @@ class Flaskerk:
         @blueprint.route(f'{self.config.endpoint}<filename>')
         def jsonfile(filename):
             if filename == self.config.filename:
-                if self.config._spec is None:
-                    self.generate_spec()
-                return jsonify(self.config._spec)
+                return jsonify(self.spec)
             abort(404)
 
         self.app.register_blueprint(blueprint)
 
-    def generate_spec(self):
+    def bypass(self, func):
+        if self.config.mode == 'greedy':
+            return False
+        elif self.config.mode == 'strict':
+            if getattr(func, '_decorator', None) == self:
+                return False
+            return True
+        else:
+            decorator = getattr(func, '_decorator', None)
+            if decorator and decorator != self:
+                return True
+            return False
+
+    @property
+    def spec(self):
+        """
+        Get OpenAPI spec for this Flask app.
+        """
+        if self.config._spec is None:
+            self._generate_spec()
+        return self.config._spec
+
+    def _generate_spec(self):
         """
         generate OpenAPI spec JSON file
         """
@@ -106,8 +128,8 @@ class Flaskerk:
             func = self.app.view_functions[rule.endpoint]
             path, parameters = parse_url(str(rule))
 
-            # bypass the function  by others
-            if hasattr(func, '_decorator') and func._decorator != id(self):
+            # bypass the function decorated by others
+            if self.bypass(func):
                 continue
 
             # multiple methods (with different func) may bond to the same path
@@ -145,37 +167,35 @@ class Flaskerk:
                     })
                 spec['parameters'] = parameters
 
+                spec['responses'] = {}
+                has_2xx = False
+                if hasattr(func, 'x'):
+                    for code, msg in func.x.items():
+                        if code.startswith('2'):
+                            has_2xx = True
+                        spec['responses'][code] = {
+                            'description': msg,
+                        }
+
                 if hasattr(func, 'resp'):
-                    spec['responses'] = {
-                        '200': {
-                            'description': 'Successful Response',
-                            'content': {
-                                'application/json': {
-                                    'schema': {
-                                        '$ref': f'#/components/schemas/{func.resp}'
-                                    }
+                    spec['responses']['200'] = {
+                        'description': 'Successful Response',
+                        'content': {
+                            'application/json': {
+                                'schema': {
+                                    '$ref': f'#/components/schemas/{func.resp}'
                                 }
                             }
                         },
                     }
-                else:
-                    spec['responses'] = {
-                        '200': {
-                            'description': 'Successful Response',
-                        }
-                    }
+                elif not has_2xx:
+                    spec['responses']['200'] = { 'description': 'Successful Response' }
 
                 if any([hasattr(func, schema)
                         for schema in ('query', 'data', 'resp')]):
                     spec['responses']['422'] = {
                         'description': 'Validation Error',
                     }
-
-                if hasattr(func, 'x'):
-                    for code, msg in func.x.items():
-                        spec['responses'][str(code)] = {
-                            'description': msg,
-                        }
 
                 routes[path][method.lower()] = spec
 
@@ -256,11 +276,17 @@ class Flaskerk:
 
                 request.query = json_query
                 request.json_data = json_data
+
                 response = func(*args, **kwargs)
+                others = ()
+                if isinstance(response, tuple) and len(response) > 1:
+                    response, others = response[0], response[1:]
                 if resp and not isinstance(response, resp):
                     abort_json(500, 'Wrong response type produced by server.')
 
-                return jsonify(**response.dict()) if resp else response
+                if resp:
+                    return make_response(jsonify(**response.dict()), *others)
+                return make_response(response, *others)
 
             # register schemas to this function
             for schema, name in zip(
@@ -275,13 +301,13 @@ class Flaskerk:
             code_msg = {}
             for e in x:
                 assert isinstance(e, HTTPException)
-                code_msg[e.code] = e.msg
+                code_msg[str(e.code)] = e.msg
 
             if code_msg:
                 validate_request.x = code_msg
 
-            # register class ID for later verification
-            validate_request._decorator = id(self)
+            # register this decorator
+            validate_request._decorator = self
 
             return validate_request
         return decorate_validate_request
