@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from pydantic import BaseModel, Schema
 from random import random
 
@@ -29,6 +29,7 @@ class Data(BaseModel):
 
 
 e403 = HTTPException(code=403, msg='lucky for you')
+e233 = HTTPException(code=233, msg='it works')
 
 
 @app.route('/api/predict/<string(length=2):source>/<string(length=2):target>', methods=['POST'])
@@ -40,6 +41,18 @@ def predict(source, target):
     if random() < 0.5:
         e403.abort('bad luck')
     return Response(label=int(10 * random()), score=random())
+
+
+@app.route('/api/code', methods=['POST'])
+@api.validate(x=[e233])
+def withcode():
+    return jsonify('code'), 203
+
+
+@app.route('/api/header', methods=['POST'])
+@api.validate(x=[e233])
+def withheader():
+    return jsonify('header'), 203, {'X': 233}
 
 
 if __name__ == '__main__':
