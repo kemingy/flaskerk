@@ -9,7 +9,7 @@ class Query(BaseModel):
 
 app = Flask(__name__)
 api = Flaskerk()
-another = Flaskerk(ui='swagger')
+another = Flaskerk(ui='swagger', mode='strict')
 
 
 @app.route('/api/classify')
