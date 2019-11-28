@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Schema, validator
-from pydantic.dataclasses import dataclass
 from werkzeug.exceptions import _aborter, default_exceptions
 from werkzeug.exceptions import HTTPException as WerkzeugException
 from werkzeug.http import HTTP_STATUS_CODES
@@ -15,8 +14,7 @@ class HTTPValidationError(BaseModel):
     description: str = 'Unprocessable Entity'
 
 
-@dataclass
-class HTTPException:
+class HTTPException(BaseModel):
     """
     HTTP Exceptions.
 
