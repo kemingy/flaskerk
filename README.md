@@ -59,6 +59,13 @@ Changes you need to make:
 
 After that, this library will help you validate the incoming request and provide API document in `/docs`.
 
+| Parameters in `Flaskerk.validate` | Corresponding parameters in `Flask` |
+| ------------- | ------------- |
+| `query` | `request.query` |
+| `data` | `request.json_data` |
+| `resp` | \ |
+| `x` | \ |
+
 For more details, check the [document](https://kemingy.github.io/flaskerk).
 
 
