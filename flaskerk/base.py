@@ -189,7 +189,7 @@ class Flaskerk:
                         },
                     }
                 elif not has_2xx:
-                    spec['responses']['200'] = { 'description': 'Successful Response' }
+                    spec['responses']['200'] = {'description': 'Successful Response'}
 
                 if any([hasattr(func, schema)
                         for schema in ('query', 'data', 'resp')]):
