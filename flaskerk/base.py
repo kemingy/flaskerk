@@ -4,7 +4,7 @@ from flask import Blueprint, abort, request, jsonify, make_response, Flask
 
 from flaskerk.config import Config
 from flaskerk.view import APIview
-from flaskerk.utils import abort_json, parse_url
+from flaskerk.utils import abort_json, parse_url, get_summary_desc
 from flaskerk.exception import HTTPException
 
 
@@ -140,8 +140,10 @@ class Flaskerk:
                 if method in ['HEAD', 'OPTIONS']:
                     continue
 
+                summary, desc = get_summary_desc(func)
                 spec = {
-                    'summary': func.__name__.capitalize(),
+                    'summary': summary or func.__name__.capitalize(),
+                    'description': desc or '',
                     'operationID': func.__name__ + '__' + method.lower(),
                 }
 
@@ -156,8 +158,9 @@ class Flaskerk:
                         }
                     }
 
+                params = parameters[:]
                 if hasattr(func, 'query'):
-                    parameters.append({
+                    params.append({
                         'name': func.query,
                         'in': 'query',
                         'required': True,
@@ -165,7 +168,7 @@ class Flaskerk:
                             '$ref': f'#/components/schemas/{func.query}',
                         }
                     })
-                spec['parameters'] = parameters
+                spec['parameters'] = params
 
                 spec['responses'] = {}
                 has_2xx = False

@@ -1,3 +1,4 @@
+from inspect import getdoc
 from flask import abort, make_response, jsonify
 from werkzeug.routing import parse_rule, parse_converter_args
 from werkzeug.exceptions import default_exceptions
@@ -30,6 +31,22 @@ def abort_json(code: int, msg: str = ''):
         assert code in default_exceptions
         msg = default_exceptions[code].description
     abort(make_response(jsonify(message=msg), code))
+
+
+def get_summary_desc(func):
+    """
+    get summary, description from `func.__doc__`
+
+    Summary and description are split by '\n\n'. If only one is provided,
+    it will be used as description.
+    """
+    doc = getdoc(func)
+    if not doc:
+        return None, None
+    doc = doc.split('\n\n', 1)
+    if len(doc) == 1:
+        return None, doc[0]
+    return doc
 
 
 def get_converter(converter: str, *args, **kwargs):
