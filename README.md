@@ -105,11 +105,16 @@ e233 = HTTPException(code=233, msg='lucky for you')
 @app.route('/api/predict/<string(length=2):source>/<string(length=2):target>', methods=['POST'])
 @api.validate(query=Query, data=Data, resp=Response, x=[e403])
 def predict(source, target):
+    """
+    predict demo
+
+    demo for `query`, `data`, `resp`, `x`
+    """
     print(f'=> from {source} to {target}')  # path
     print(f'Data: {request.json_data}')  # Data
     print(f'Query: {request.query}')  # Query
     if random() < 0.5:
-        e233.abort()
+        e403.abort('bad luck')
     return Response(label=int(10 * random()), score=random())
 
 if __name__ == '__main__':
