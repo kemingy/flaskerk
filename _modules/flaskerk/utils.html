@@ -38,7 +38,8 @@
           <div class="body" role="main">
             
   <h1>Source code for flaskerk.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">abort</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">jsonify</span>
+<span></span><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getdoc</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">abort</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">jsonify</span>
 <span class="kn">from</span> <span class="nn">werkzeug.routing</span> <span class="kn">import</span> <span class="n">parse_rule</span><span class="p">,</span> <span class="n">parse_converter_args</span>
 <span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">default_exceptions</span>
 
@@ -70,6 +71,22 @@
         <span class="k">assert</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">default_exceptions</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">default_exceptions</span><span class="p">[</span><span class="n">code</span><span class="p">]</span><span class="o">.</span><span class="n">description</span>
     <span class="n">abort</span><span class="p">(</span><span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">),</span> <span class="n">code</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_summary_desc"><a class="viewcode-back" href="../../utils.html#flaskerk.utils.get_summary_desc">[docs]</a><span class="k">def</span> <span class="nf">get_summary_desc</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get summary, description from `func.__doc__`</span>
+
+<span class="sd">    Summary and description are split by &#39;\n\n&#39;. If only one is provided,</span>
+<span class="sd">    it will be used as description.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">doc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">doc</span></div>
 
 
 <div class="viewcode-block" id="get_converter"><a class="viewcode-back" href="../../utils.html#flaskerk.utils.get_converter">[docs]</a><span class="k">def</span> <span class="nf">get_converter</span><span class="p">(</span><span class="n">converter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

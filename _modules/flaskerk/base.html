@@ -44,7 +44,7 @@
 
 <span class="kn">from</span> <span class="nn">flaskerk.config</span> <span class="kn">import</span> <span class="n">Config</span>
 <span class="kn">from</span> <span class="nn">flaskerk.view</span> <span class="kn">import</span> <span class="n">APIview</span>
-<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="kn">import</span> <span class="n">abort_json</span><span class="p">,</span> <span class="n">parse_url</span>
+<span class="kn">from</span> <span class="nn">flaskerk.utils</span> <span class="kn">import</span> <span class="n">abort_json</span><span class="p">,</span> <span class="n">parse_url</span><span class="p">,</span> <span class="n">get_summary_desc</span>
 <span class="kn">from</span> <span class="nn">flaskerk.exception</span> <span class="kn">import</span> <span class="n">HTTPException</span>
 
 
@@ -180,8 +180,10 @@
                 <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;HEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">]:</span>
                     <span class="k">continue</span>
 
+                <span class="n">summary</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">get_summary_desc</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
                 <span class="n">spec</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span>
+                    <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">summary</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">desc</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;operationID&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
                 <span class="p">}</span>
 
@@ -196,8 +198,9 @@
                         <span class="p">}</span>
                     <span class="p">}</span>
 
+                <span class="n">params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[:]</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">):</span>
-                    <span class="n">parameters</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
                         <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
                         <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
@@ -205,7 +208,7 @@
                             <span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;#/components/schemas/</span><span class="si">{func.query}</span><span class="s1">&#39;</span><span class="p">,</span>
                         <span class="p">}</span>
                     <span class="p">})</span>
-                <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+                <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
 
                 <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="n">has_2xx</span> <span class="o">=</span> <span class="kc">False</span>
