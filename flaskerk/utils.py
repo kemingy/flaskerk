@@ -3,21 +3,7 @@ from flask import abort, make_response, jsonify
 from werkzeug.routing import parse_rule, parse_converter_args
 from werkzeug.exceptions import default_exceptions
 
-from flaskerk.const import CONVERTER_TYPE_ANY, CONVERTER_TYPE_INT, CONVERTER_TYPE_FLOAT, \
-    CONVERTER_TYPE_UUID, CONVERTER_TYPE_PATH, CONVERTER_TYPE_STRING, CONVERTER_TYPE_DEFAULT
-from flaskerk.converters import get_converter_type_any, get_converter_type_int, \
-    get_converter_type_float, get_converter_type_uuid, get_converter_type_path, \
-    get_converter_type_string, get_converter_type_default
-
-CONVERTER_MAPPING = {
-    CONVERTER_TYPE_ANY: get_converter_type_any,
-    CONVERTER_TYPE_INT: get_converter_type_int,
-    CONVERTER_TYPE_FLOAT: get_converter_type_float,
-    CONVERTER_TYPE_UUID: get_converter_type_uuid,
-    CONVERTER_TYPE_PATH: get_converter_type_path,
-    CONVERTER_TYPE_STRING: get_converter_type_string,
-    CONVERTER_TYPE_DEFAULT: get_converter_type_default
-}
+from flaskerk.converters import CONVERTER_MAPPING
 
 
 def abort_json(code: int, msg: str = ''):
@@ -38,14 +24,14 @@ def get_summary_desc(func):
     get summary, description from `func.__doc__`
 
     Summary and description are split by '\n\n'. If only one is provided,
-    it will be used as description.
+    it will be used as summary.
     """
     doc = getdoc(func)
     if not doc:
         return None, None
     doc = doc.split('\n\n', 1)
     if len(doc) == 1:
-        return None, doc[0]
+        return doc[0], None
     return doc
 
 
