@@ -43,21 +43,7 @@
 <span class="kn">from</span> <span class="nn">werkzeug.routing</span> <span class="kn">import</span> <span class="n">parse_rule</span><span class="p">,</span> <span class="n">parse_converter_args</span>
 <span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">default_exceptions</span>
 
-<span class="kn">from</span> <span class="nn">flaskerk.const</span> <span class="kn">import</span> <span class="n">CONVERTER_TYPE_ANY</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_INT</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_FLOAT</span><span class="p">,</span> \
-    <span class="n">CONVERTER_TYPE_UUID</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_PATH</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_STRING</span><span class="p">,</span> <span class="n">CONVERTER_TYPE_DEFAULT</span>
-<span class="kn">from</span> <span class="nn">flaskerk.converters</span> <span class="kn">import</span> <span class="n">get_converter_type_any</span><span class="p">,</span> <span class="n">get_converter_type_int</span><span class="p">,</span> \
-    <span class="n">get_converter_type_float</span><span class="p">,</span> <span class="n">get_converter_type_uuid</span><span class="p">,</span> <span class="n">get_converter_type_path</span><span class="p">,</span> \
-    <span class="n">get_converter_type_string</span><span class="p">,</span> <span class="n">get_converter_type_default</span>
-
-<span class="n">CONVERTER_MAPPING</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">CONVERTER_TYPE_ANY</span><span class="p">:</span> <span class="n">get_converter_type_any</span><span class="p">,</span>
-    <span class="n">CONVERTER_TYPE_INT</span><span class="p">:</span> <span class="n">get_converter_type_int</span><span class="p">,</span>
-    <span class="n">CONVERTER_TYPE_FLOAT</span><span class="p">:</span> <span class="n">get_converter_type_float</span><span class="p">,</span>
-    <span class="n">CONVERTER_TYPE_UUID</span><span class="p">:</span> <span class="n">get_converter_type_uuid</span><span class="p">,</span>
-    <span class="n">CONVERTER_TYPE_PATH</span><span class="p">:</span> <span class="n">get_converter_type_path</span><span class="p">,</span>
-    <span class="n">CONVERTER_TYPE_STRING</span><span class="p">:</span> <span class="n">get_converter_type_string</span><span class="p">,</span>
-    <span class="n">CONVERTER_TYPE_DEFAULT</span><span class="p">:</span> <span class="n">get_converter_type_default</span>
-<span class="p">}</span>
+<span class="kn">from</span> <span class="nn">flaskerk.converters</span> <span class="kn">import</span> <span class="n">CONVERTER_MAPPING</span>
 
 
 <div class="viewcode-block" id="abort_json"><a class="viewcode-back" href="../../utils.html#flaskerk.utils.abort_json">[docs]</a><span class="k">def</span> <span class="nf">abort_json</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
@@ -78,14 +64,14 @@
 <span class="sd">    get summary, description from `func.__doc__`</span>
 
 <span class="sd">    Summary and description are split by &#39;\n\n&#39;. If only one is provided,</span>
-<span class="sd">    it will be used as description.</span>
+<span class="sd">    it will be used as summary.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
     <span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">doc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">doc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">doc</span></div>
 
 

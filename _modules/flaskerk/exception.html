@@ -38,7 +38,7 @@
           <div class="body" role="main">
             
   <h1>Source code for flaskerk.exception</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">validator</span>
+<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">validator</span>
 <span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">_aborter</span><span class="p">,</span> <span class="n">default_exceptions</span>
 <span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">HTTPException</span> <span class="k">as</span> <span class="n">WerkzeugException</span>
 <span class="kn">from</span> <span class="nn">werkzeug.http</span> <span class="kn">import</span> <span class="n">HTTP_STATUS_CODES</span>
@@ -47,7 +47,7 @@
 
 
 <span class="k">class</span> <span class="nc">HTTPValidationError</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="mi">422</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s1">&#39;HTTP response status code&#39;</span><span class="p">,</span>
     <span class="p">)</span>
@@ -82,7 +82,7 @@
 <span class="sd">       # abort</span>
 <span class="sd">       code777.abort()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span>
         <span class="n">gt</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
         <span class="n">lt</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>

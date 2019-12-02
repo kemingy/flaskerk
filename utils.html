@@ -82,7 +82,7 @@
 <p>Summary and description are split by ‘</p>
 </div></blockquote>
 <dl class="simple">
-<dt>‘. If only one is provided,</dt><dd><p>it will be used as description.</p>
+<dt>‘. If only one is provided,</dt><dd><p>it will be used as summary.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -95,8 +95,8 @@
 </dd></dl>
 
 <span class="target" id="module-flaskerk.converters"></span><dl class="function">
-<dt id="flaskerk.converters.get_converter_type_any">
-<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_any</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_any"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_any" title="Permalink to this definition">¶</a></dt>
+<dt id="flaskerk.converters.convert_any">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">convert_any</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#convert_any"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.convert_any" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle converter type “any”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -112,8 +112,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="flaskerk.converters.get_converter_type_default">
-<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_default</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_default" title="Permalink to this definition">¶</a></dt>
+<dt id="flaskerk.converters.convert_default">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">convert_default</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#convert_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.convert_default" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle converter type “default”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -129,8 +129,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="flaskerk.converters.get_converter_type_float">
-<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_float</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_float" title="Permalink to this definition">¶</a></dt>
+<dt id="flaskerk.converters.convert_float">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">convert_float</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#convert_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.convert_float" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle converter type “float”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -146,8 +146,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="flaskerk.converters.get_converter_type_int">
-<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_int</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_int" title="Permalink to this definition">¶</a></dt>
+<dt id="flaskerk.converters.convert_int">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">convert_int</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#convert_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.convert_int" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle converter type “int”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -163,8 +163,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="flaskerk.converters.get_converter_type_path">
-<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_path</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_path" title="Permalink to this definition">¶</a></dt>
+<dt id="flaskerk.converters.convert_path">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">convert_path</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#convert_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.convert_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle converter type “path”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -180,8 +180,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="flaskerk.converters.get_converter_type_string">
-<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_string</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_string" title="Permalink to this definition">¶</a></dt>
+<dt id="flaskerk.converters.convert_string">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">convert_string</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#convert_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.convert_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle converter type “string”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -197,8 +197,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="flaskerk.converters.get_converter_type_uuid">
-<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">get_converter_type_uuid</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#get_converter_type_uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.get_converter_type_uuid" title="Permalink to this definition">¶</a></dt>
+<dt id="flaskerk.converters.convert_uuid">
+<code class="sig-prename descclassname">flaskerk.converters.</code><code class="sig-name descname">convert_uuid</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/flaskerk/converters.html#convert_uuid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flaskerk.converters.convert_uuid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle converter type “uuid”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

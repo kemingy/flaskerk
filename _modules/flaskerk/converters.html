@@ -38,7 +38,13 @@
           <div class="body" role="main">
             
   <h1>Source code for flaskerk.converters</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="get_converter_type_any"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.get_converter_type_any">[docs]</a><span></span><span class="k">def</span> <span class="nf">get_converter_type_any</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span></span><span class="c1"># converters</span>
+<span class="c1">#</span>
+<span class="c1"># check Werkzeug builtin_converters in</span>
+<span class="c1"># https://werkzeug.palletsprojects.com/en/0.15.x/routing/#builtin-converters</span>
+
+
+<div class="viewcode-block" id="convert_any"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.convert_any">[docs]</a><span class="k">def</span> <span class="nf">convert_any</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle converter type &quot;any&quot;</span>
 
@@ -56,7 +62,7 @@
     <span class="k">return</span> <span class="n">schema</span></div>
 
 
-<div class="viewcode-block" id="get_converter_type_int"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.get_converter_type_int">[docs]</a><span class="k">def</span> <span class="nf">get_converter_type_int</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_int"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.convert_int">[docs]</a><span class="k">def</span> <span class="nf">convert_int</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle converter type &quot;int&quot;</span>
 
@@ -75,7 +81,7 @@
     <span class="k">return</span> <span class="n">schema</span></div>
 
 
-<div class="viewcode-block" id="get_converter_type_float"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.get_converter_type_float">[docs]</a><span class="k">def</span> <span class="nf">get_converter_type_float</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_float"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.convert_float">[docs]</a><span class="k">def</span> <span class="nf">convert_float</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle converter type &quot;float&quot;</span>
 
@@ -90,7 +96,7 @@
     <span class="k">return</span> <span class="n">schema</span></div>
 
 
-<div class="viewcode-block" id="get_converter_type_uuid"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.get_converter_type_uuid">[docs]</a><span class="k">def</span> <span class="nf">get_converter_type_uuid</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_uuid"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.convert_uuid">[docs]</a><span class="k">def</span> <span class="nf">convert_uuid</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle converter type &quot;uuid&quot;</span>
 
@@ -105,7 +111,7 @@
     <span class="k">return</span> <span class="n">schema</span></div>
 
 
-<div class="viewcode-block" id="get_converter_type_path"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.get_converter_type_path">[docs]</a><span class="k">def</span> <span class="nf">get_converter_type_path</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_path"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.convert_path">[docs]</a><span class="k">def</span> <span class="nf">convert_path</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle converter type &quot;path&quot;</span>
 
@@ -120,7 +126,7 @@
     <span class="k">return</span> <span class="n">schema</span></div>
 
 
-<div class="viewcode-block" id="get_converter_type_string"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.get_converter_type_string">[docs]</a><span class="k">def</span> <span class="nf">get_converter_type_string</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_string"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.convert_string">[docs]</a><span class="k">def</span> <span class="nf">convert_string</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle converter type &quot;string&quot;</span>
 
@@ -137,7 +143,7 @@
     <span class="k">return</span> <span class="n">schema</span></div>
 
 
-<div class="viewcode-block" id="get_converter_type_default"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.get_converter_type_default">[docs]</a><span class="k">def</span> <span class="nf">get_converter_type_default</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_default"><a class="viewcode-back" href="../../utils.html#flaskerk.converters.convert_default">[docs]</a><span class="k">def</span> <span class="nf">convert_default</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle converter type &quot;default&quot;</span>
 
@@ -147,6 +153,25 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">schema</span></div>
+
+
+<span class="n">CONVERTER_ANY</span> <span class="o">=</span> <span class="s1">&#39;any&#39;</span>
+<span class="n">CONVERTER_INT</span> <span class="o">=</span> <span class="s1">&#39;int&#39;</span>
+<span class="n">CONVERTER_FLOAT</span> <span class="o">=</span> <span class="s1">&#39;float&#39;</span>
+<span class="n">CONVERTER_UUID</span> <span class="o">=</span> <span class="s1">&#39;uuid&#39;</span>
+<span class="n">CONVERTER_PATH</span> <span class="o">=</span> <span class="s1">&#39;path&#39;</span>
+<span class="n">CONVERTER_STRING</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>
+<span class="n">CONVERTER_DEFAULT</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+
+<span class="n">CONVERTER_MAPPING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">CONVERTER_ANY</span><span class="p">:</span> <span class="n">convert_any</span><span class="p">,</span>
+    <span class="n">CONVERTER_INT</span><span class="p">:</span> <span class="n">convert_int</span><span class="p">,</span>
+    <span class="n">CONVERTER_FLOAT</span><span class="p">:</span> <span class="n">convert_float</span><span class="p">,</span>
+    <span class="n">CONVERTER_UUID</span><span class="p">:</span> <span class="n">convert_uuid</span><span class="p">,</span>
+    <span class="n">CONVERTER_PATH</span><span class="p">:</span> <span class="n">convert_path</span><span class="p">,</span>
+    <span class="n">CONVERTER_STRING</span><span class="p">:</span> <span class="n">convert_string</span><span class="p">,</span>
+    <span class="n">CONVERTER_DEFAULT</span><span class="p">:</span> <span class="n">convert_default</span>
+<span class="p">}</span>
 </pre></div>
 
           </div>
