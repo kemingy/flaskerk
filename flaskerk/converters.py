@@ -1,4 +1,10 @@
-def get_converter_type_any(*args, **kwargs):
+# converters
+#
+# check Werkzeug builtin_converters in
+# https://werkzeug.palletsprojects.com/en/0.15.x/routing/#builtin-converters
+
+
+def convert_any(*args, **kwargs):
     """
     Handle converter type "any"
 
@@ -16,7 +22,7 @@ def get_converter_type_any(*args, **kwargs):
     return schema
 
 
-def get_converter_type_int(*args, **kwargs):
+def convert_int(*args, **kwargs):
     """
     Handle converter type "int"
 
@@ -35,7 +41,7 @@ def get_converter_type_int(*args, **kwargs):
     return schema
 
 
-def get_converter_type_float(*args, **kwargs):
+def convert_float(*args, **kwargs):
     """
     Handle converter type "float"
 
@@ -50,7 +56,7 @@ def get_converter_type_float(*args, **kwargs):
     return schema
 
 
-def get_converter_type_uuid(*args, **kwargs):
+def convert_uuid(*args, **kwargs):
     """
     Handle converter type "uuid"
 
@@ -65,7 +71,7 @@ def get_converter_type_uuid(*args, **kwargs):
     return schema
 
 
-def get_converter_type_path(*args, **kwargs):
+def convert_path(*args, **kwargs):
     """
     Handle converter type "path"
 
@@ -80,7 +86,7 @@ def get_converter_type_path(*args, **kwargs):
     return schema
 
 
-def get_converter_type_string(*args, **kwargs):
+def convert_string(*args, **kwargs):
     """
     Handle converter type "string"
 
@@ -97,7 +103,7 @@ def get_converter_type_string(*args, **kwargs):
     return schema
 
 
-def get_converter_type_default(*args, **kwargs):
+def convert_default(*args, **kwargs):
     """
     Handle converter type "default"
 
@@ -107,3 +113,22 @@ def get_converter_type_default(*args, **kwargs):
     """
     schema = {'type': 'string'}
     return schema
+
+
+CONVERTER_ANY = 'any'
+CONVERTER_INT = 'int'
+CONVERTER_FLOAT = 'float'
+CONVERTER_UUID = 'uuid'
+CONVERTER_PATH = 'path'
+CONVERTER_STRING = 'string'
+CONVERTER_DEFAULT = 'default'
+
+CONVERTER_MAPPING = {
+    CONVERTER_ANY: convert_any,
+    CONVERTER_INT: convert_int,
+    CONVERTER_FLOAT: convert_float,
+    CONVERTER_UUID: convert_uuid,
+    CONVERTER_PATH: convert_path,
+    CONVERTER_STRING: convert_string,
+    CONVERTER_DEFAULT: convert_default
+}

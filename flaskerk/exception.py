@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Schema, validator
+from pydantic import BaseModel, Field, validator
 from werkzeug.exceptions import _aborter, default_exceptions
 from werkzeug.exceptions import HTTPException as WerkzeugException
 from werkzeug.http import HTTP_STATUS_CODES
@@ -7,7 +7,7 @@ from flaskerk.utils import abort_json
 
 
 class HTTPValidationError(BaseModel):
-    code: int = Schema(
+    code: int = Field(
         422,
         description='HTTP response status code',
     )
@@ -42,7 +42,7 @@ class HTTPException(BaseModel):
        # abort
        code777.abort()
     """
-    code: int = Schema(
+    code: int = Field(
         ...,
         gt=100,
         lt=1000,
