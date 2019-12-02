@@ -1,2 +1,2 @@
-flask
-pydantic
+flask>=1.0
+pydantic>=1.2
