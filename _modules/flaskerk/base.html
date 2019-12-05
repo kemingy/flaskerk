@@ -160,6 +160,7 @@
 <span class="sd">        generate OpenAPI spec JSON file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">routes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">url_map</span><span class="o">.</span><span class="n">iter_rules</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">endpoint</span><span class="p">)</span> <span class="ow">or</span> \
                     <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/static&#39;</span><span class="p">):</span>
@@ -180,11 +181,17 @@
                 <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;HEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">]:</span>
                     <span class="k">continue</span>
 
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;tags&#39;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+                            <span class="n">tags</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">tag</span><span class="p">}</span>
+
                 <span class="n">summary</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">get_summary_desc</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
                 <span class="n">spec</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">summary</span> <span class="ow">or</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span>
                     <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">desc</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;operationID&#39;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                    <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;tags&#39;</span><span class="p">,</span> <span class="p">[]),</span>
                 <span class="p">}</span>
 
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">):</span>
@@ -255,6 +262,7 @@
                 <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
                 <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
             <span class="p">},</span>
+            <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tags</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
             <span class="s1">&#39;paths&#39;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="o">**</span><span class="n">routes</span>
             <span class="p">},</span>
@@ -267,13 +275,14 @@
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">data</span>
 
-<div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="Flaskerk.validate"><a class="viewcode-back" href="../../doc.html#flaskerk.base.Flaskerk.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[],</span> <span class="n">tags</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param query: ``pydantic.BaseModel`` schema for request. The parsed</span>
 <span class="sd">                      data will store in :class:`flask.request.query`.</span>
 <span class="sd">        :param resp: ``pydantic.BaseModel`` schema for response</span>
 <span class="sd">        :param data: ``pydantic.BaseModel`` schema for JSON data</span>
 <span class="sd">        :param x: List of :class:`flaskerk.exception.HTTPException`</span>
+<span class="sd">        :param tags: List of str, each one is a tag for this API route</span>
 
 <span class="sd">        validate JSON data according to Model schema</span>
 
@@ -349,6 +358,10 @@
             <span class="k">if</span> <span class="n">code_msg</span><span class="p">:</span>
                 <span class="n">validate_request</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">code_msg</span>
 
+            <span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags</span><span class="p">),</span> <span class="s1">&#39;each tag should be string&#39;</span>
+                <span class="n">validate_request</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
+
             <span class="c1"># register this decorator</span>
             <span class="n">validate_request</span><span class="o">.</span><span class="n">_decorator</span> <span class="o">=</span> <span class="bp">self</span>
 
@@ -394,7 +407,7 @@
   
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Keming.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   <script type="text/javascript" src="../../_static/version_warning_offset.js"></script>
 

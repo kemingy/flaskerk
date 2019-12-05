@@ -13,14 +13,10 @@ Mainly built for Machine Learning Model services.
 Features
 --------
 
-- [x] JSON data(request&response) validation with pydantic_
-- [x] support HTTP exceptions (default&customized)
-- [x] OpenAPI_ spec
-- [x] Redoc_ UI
-- [x] Swagger_ UI
-- [x] support flask url path validation
-- [ ] support header validation
-- [ ] support cookie validation
+* Generate API document with redoc_ or swagger_
+* Less boilerplate code, annotations are really easy-to-use
+* Validate query, JSON data, response data with pydantic_
+* Better HTTP exceptions for API services (default & customized) (JSON instead of HTML)
 
 .. _pydantic: https://github.com/samuelcolvin/pydantic/
 .. _openapi: https://github.com/OAI/OpenAPI-Specification
@@ -77,7 +73,7 @@ More feature
 
 .. code:: py
 
-    from flask import Flask, request
+    from flask import Flask, request, jsonify
     from pydantic import BaseModel, Schema
     from random import random
 
@@ -108,11 +104,17 @@ More feature
 
 
     e403 = HTTPException(code=403, msg='lucky for you')
+    e233 = HTTPException(code=233, msg='it works')
 
 
     @app.route('/api/predict/<string(length=2):source>/<string(length=2):target>', methods=['POST'])
-    @api.validate(query=Query, data=Data, resp=Response, x=[e403])
+    @api.validate(query=Query, data=Data, resp=Response, x=[e403], tags=['model'])
     def predict(source, target):
+        """
+        predict demo
+
+        demo for `query`, `data`, `resp`, `x`
+        """
         print(f'=> from {source} to {target}')  # path
         print(f'Data: {request.json_data}')  # Data
         print(f'Query: {request.query}')  # Query
@@ -121,10 +123,36 @@ More feature
         return Response(label=int(10 * random()), score=random())
 
 
+    @app.route('/api/code', methods=['POST'])
+    @api.validate(x=[e233], tags=['test'])
+    def withcode():
+        """
+        demo for JSON with status code
+        """
+        return jsonify('code'), 203
+
+
+    @app.route('/api/code', methods=['GET'])
+    @api.validate()
+    def getcode():
+        """
+        demo for the same route with different methods
+        """
+        return jsonify('code'), 200
+
+
+    @app.route('/api/header', methods=['POST'])
+    @api.validate(x=[e233], tags=['test', 'demo'])
+    def withheader():
+        """
+        demo for JSON with status code and header
+        """
+        return jsonify('header'), 203, {'X': 233}
+
+
     if __name__ == '__main__':
         api.register(app)
         app.run()
-
 
 
 try it with ``http POST ':5000/api/predict/zh/en?text=hello' uid=0b01001001 limit=5 vip=true``

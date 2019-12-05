@@ -47,14 +47,10 @@
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>[x] JSON data(request&amp;response) validation with <a class="reference external" href="https://github.com/samuelcolvin/pydantic/">pydantic</a></p></li>
-<li><p>[x] support HTTP exceptions (default&amp;customized)</p></li>
-<li><p>[x] <a class="reference external" href="https://github.com/OAI/OpenAPI-Specification">OpenAPI</a> spec</p></li>
-<li><p>[x] <a class="reference external" href="https://github.com/Redocly/redoc">Redoc</a> UI</p></li>
-<li><p>[x] <a class="reference external" href="https://github.com/swagger-api/swagger-ui">Swagger</a> UI</p></li>
-<li><p>[x] support flask url path validation</p></li>
-<li><p>[ ] support header validation</p></li>
-<li><p>[ ] support cookie validation</p></li>
+<li><p>Generate API document with <a class="reference external" href="https://github.com/Redocly/redoc">redoc</a> or <a class="reference external" href="https://github.com/swagger-api/swagger-ui">swagger</a></p></li>
+<li><p>Less boilerplate code, annotations are really easy-to-use</p></li>
+<li><p>Validate query, JSON data, response data with <a class="reference external" href="https://github.com/samuelcolvin/pydantic/">pydantic</a></p></li>
+<li><p>Better HTTP exceptions for API services (default &amp; customized) (JSON instead of HTML)</p></li>
 </ul>
 </div>
 <div class="section" id="quick-start">
@@ -103,7 +99,7 @@
 </div>
 <div class="section" id="more-feature">
 <h3>More feature<a class="headerlink" href="#more-feature" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Schema</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">random</span>
 
@@ -134,17 +130,50 @@
 
 
 <span class="n">e403</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;lucky for you&#39;</span><span class="p">)</span>
+<span class="n">e233</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">233</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;it works&#39;</span><span class="p">)</span>
 
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/predict/&lt;string(length=2):source&gt;/&lt;string(length=2):target&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
-<span class="nd">@api</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="n">Response</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">e403</span><span class="p">])</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Query</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">,</span> <span class="n">resp</span><span class="o">=</span><span class="n">Response</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">e403</span><span class="p">],</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    predict demo</span>
+
+<span class="sd">    demo for `query`, `data`, `resp`, `x`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;=&gt; from </span><span class="si">{source}</span><span class="s1"> to </span><span class="si">{target}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># path</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Data: </span><span class="si">{request.json_data}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Data</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Query: </span><span class="si">{request.query}</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Query</span>
     <span class="k">if</span> <span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
         <span class="n">e403</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="s1">&#39;bad luck&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">random</span><span class="p">()),</span> <span class="n">score</span><span class="o">=</span><span class="n">random</span><span class="p">())</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/code&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">e233</span><span class="p">],</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">withcode</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    demo for JSON with status code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">),</span> <span class="mi">203</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/code&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">getcode</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    demo for the same route with different methods</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">),</span> <span class="mi">200</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/header&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">e233</span><span class="p">],</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;demo&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">withheader</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    demo for JSON with status code and header</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">),</span> <span class="mi">203</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="mi">233</span><span class="p">}</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -222,7 +251,7 @@
   
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, Keming.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   <script type="text/javascript" src="_static/version_warning_offset.js"></script>
 
