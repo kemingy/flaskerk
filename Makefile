@@ -2,7 +2,7 @@ install:
 	pip3 install -e .
 
 test:
-	py.test tests -vv
+	py.test tests -vv --disable-pytest-warnings
 
 doc:
 	cd docs && make html
