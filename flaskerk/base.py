@@ -120,6 +120,7 @@ class Flaskerk:
         generate OpenAPI spec JSON file
         """
         routes = {}
+        tags = {}
         for rule in self.app.url_map.iter_rules():
             if str(rule).startswith(self.config.endpoint) or \
                     str(rule).startswith('/static'):
@@ -140,11 +141,17 @@ class Flaskerk:
                 if method in ['HEAD', 'OPTIONS']:
                     continue
 
+                if hasattr(func, 'tags'):
+                    for tag in func.tags:
+                        if tag not in tags:
+                            tags[tag] = {'name': tag}
+
                 summary, desc = get_summary_desc(func)
                 spec = {
                     'summary': summary or func.__name__.capitalize(),
                     'description': desc or '',
                     'operationID': func.__name__ + '__' + method.lower(),
+                    'tags': getattr(func, 'tags', []),
                 }
 
                 if hasattr(func, 'data'):
@@ -215,6 +222,7 @@ class Flaskerk:
                 'title': self.config.title,
                 'version': self.config.version,
             },
+            'tags': list(tags.values()),
             'paths': {
                 **routes
             },
@@ -227,13 +235,14 @@ class Flaskerk:
         }
         self.config._spec = data
 
-    def validate(self, query=None, data=None, resp=None, x=[]):
+    def validate(self, query=None, data=None, resp=None, x=[], tags=[]):
         """
         :param query: ``pydantic.BaseModel`` schema for request. The parsed
                       data will store in :class:`flask.request.query`.
         :param resp: ``pydantic.BaseModel`` schema for response
         :param data: ``pydantic.BaseModel`` schema for JSON data
         :param x: List of :class:`flaskerk.exception.HTTPException`
+        :param tags: List of str, each one is a tag for this API route
 
         validate JSON data according to Model schema
 
@@ -308,6 +317,10 @@ class Flaskerk:
 
             if code_msg:
                 validate_request.x = code_msg
+
+            if tags:
+                assert ''.join(tags), 'each tag should be string'
+                validate_request.tags = tags
 
             # register this decorator
             validate_request._decorator = self
