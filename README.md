@@ -55,6 +55,7 @@ Changes you need to make:
   * `data` (JSON data from request)
   * `resp` (response) this will be transformed to JSON data after validation
   * `x` (HTTP Exceptions list)
+  * `tags` (tags for this API route)
 * register to Flask application
 
 After that, this library will help you validate the incoming request and provide API document in `/docs`.
@@ -103,7 +104,7 @@ class Data(BaseModel):
 e233 = HTTPException(code=233, msg='lucky for you')
 
 @app.route('/api/predict/<string(length=2):source>/<string(length=2):target>', methods=['POST'])
-@api.validate(query=Query, data=Data, resp=Response, x=[e403])
+@api.validate(query=Query, data=Data, resp=Response, x=[e233], tags=['model'])
 def predict(source, target):
     """
     predict demo
@@ -114,7 +115,7 @@ def predict(source, target):
     print(f'Data: {request.json_data}')  # Data
     print(f'Query: {request.query}')  # Query
     if random() < 0.5:
-        e403.abort('bad luck')
+        e233.abort('bad luck')
     return Response(label=int(10 * random()), score=random())
 
 if __name__ == '__main__':
