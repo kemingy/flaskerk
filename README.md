@@ -10,6 +10,12 @@ Mainly built for Machine Learning Model services.
 
 If you're using Falcon, check my another library [Falibrary](https://github.com/kemingy/falibrary).
 
+**Attention**
+
+I just build another library [SpecTree](https://github.com/0b01001001/spectree) that supports all the features flaskerk has with better interface. Give it a try!
+
+This library may be archived in the future.
+
 ## Features
 
 * Generate API document with [Redoc UI](https://github.com/Redocly/redoc) or [Swagger UI](https://github.com/swagger-api/swagger-ui) :yum:
